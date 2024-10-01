@@ -13,6 +13,8 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const initialPoints = Array(8).fill(0);
+  const [points, setpoints] = useState(initialPoints)
 
   const hanleClick = () => {
     let randomNumber
@@ -23,10 +25,19 @@ const App = () => {
     setSelected(randomNumber)
   }
 
+  const handleVote = () => {
+    const updatedPoints = [...points]
+    updatedPoints[selected] += 1
+    console.log(updatedPoints)
+    setpoints(updatedPoints)
+  }
+
   return (
     <div>
-      {anecdotes[selected]}
+      <p>{anecdotes[selected]}</p>
+      <p>has {points[selected]} votes</p>
       <div>
+        <button onClick={handleVote}>vote</button>
         <button onClick={hanleClick}>next anecdote</button>
       </div>
     </div>
