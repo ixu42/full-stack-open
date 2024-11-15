@@ -17,10 +17,22 @@ const App = () => {
   const addContact = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
+    if (newName.trim() === '' || newNumber.trim() === '') {
+      alert('Please enter a name and number')
+      return
+    }
+    if (!/^\d+(-\d+)*$/.test(newNumber)) {
+      alert("Please enter a valid number, e.g. 040-123456 or 123-456");
+      return;
+    }
     if (persons.map(person => person.name).includes(newName)) {
       alert(`${newName} is already added to phonebook`)
       return
-    } 
+    }
+    if (persons.map(person => person.number).includes(newNumber)) {
+      alert(`${newNumber} is already added to phonebook`)
+      return
+    }
     setPersons(persons.concat({ name: newName, number: newNumber }))
     setNewName('')
     setNewNumber('')
