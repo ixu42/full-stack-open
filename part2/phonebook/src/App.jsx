@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -21,6 +20,12 @@ const App = () => {
       })
   }, [])
 
+  // helper functions for input validation
+  const isFieldEmpty = (field) => field.trim() === ''
+  const isValidNumber = (number) => /^\d+(-\d+)*$/.test(number)
+  const isNameTaken = (name) => persons.map(person => person.name).includes(name)
+  const isNumberTaken = (number) => persons.map(person => person.number).includes(number)
+
   const confirmUpdate = (name) => {
     return window.confirm(
       `${name} is already added to the phonebook, ` +
@@ -31,17 +36,21 @@ const App = () => {
   const addContact = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
-    if (newName.trim() === '' || newNumber.trim() === '') {
+
+    if (isFieldEmpty(newName) || isFieldEmpty(newNumber)) {
       alert('Please enter a name and number')
       return
     }
-    if (!/^\d+(-\d+)*$/.test(newNumber)) {
+
+    if (!isValidNumber(newNumber)) {
       alert("Please enter a valid number, e.g. 040-123456 or 123-456");
-      return;
+      return
     }
-    if (persons.map(person => person.name).includes(newName)) {
-      if (!confirmUpdate(newName))
-        return
+
+    // handle duplicate name
+    if (isNameTaken(newName)) {
+      if (!confirmUpdate(newName)) return
+
       const id = persons.find(person => person.name === newName).id
       personService
         .update(id, { name: newName, number: newNumber })
@@ -57,10 +66,14 @@ const App = () => {
         })
       return
     }
-    if (persons.map(person => person.number).includes(newNumber)) {
+
+    // handle duplicate number
+    if (isNumberTaken(newNumber)) {
       alert(`${newNumber} is already added to phonebook`)
       return
     }
+
+    // add new contact
     const newContact = { name: newName, number: newNumber }
     personService
       .create(newContact)
