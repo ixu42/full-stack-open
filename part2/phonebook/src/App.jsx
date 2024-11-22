@@ -84,7 +84,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons contactsToShow={contactsToShow} />
+      <Persons {...{ contactsToShow, personService, persons, setPersons }} />
     </div>
   )
 }
