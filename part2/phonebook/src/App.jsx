@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import personService from './services/persons'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterTerm, setFilterTerm] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -63,6 +65,10 @@ const App = () => {
           setPersons(persons.map(person => person.name === newName ? returnedContact : person))
           setNewName('')
           setNewNumber('')
+          setNotification({ message: `Updated ${newName}`, type: 'success' })
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
         })
         .catch(() => {
           alert(`The contact '${newName}' was already deleted from the server`)
@@ -86,6 +92,10 @@ const App = () => {
         setPersons(persons.concat(returnedContact))
         setNewName('')
         setNewNumber('')
+        setNotification({ message: `Added ${newName}`, type: 'success' })
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       })
   }
 
@@ -112,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter filterTerm={filterTerm} handleFilterChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm
