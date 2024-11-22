@@ -5,19 +5,19 @@ const Persons = ({
   setPersons,
 }) => {
   const deleteContact = (id, name) => {
-    const confirmDelete = window.confirm(`Delete ${name} ?`);
+    const confirmDelete = window.confirm(`Delete ${name} ?`)
     if (!confirmDelete) {
-      return;
+      return
     }
     personService
       .remove(id)
       .then(returnedContact => {
-        console.log("Contact deleted:", returnedContact);
+        console.log("Contact deleted:", returnedContact)
         setPersons(persons.filter(person => person.id !== returnedContact.id))
       })
       .catch(error => {
-        console.error("Error deleting contact:", error);
-      });
+        console.error("Error deleting contact:", error)
+      })
   }
 
   return (

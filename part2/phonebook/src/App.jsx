@@ -28,47 +28,61 @@ const App = () => {
   const isNameTaken = (name) => persons.map(person => person.name).includes(name)
   const isNumberTaken = (number) => persons.map(person => person.number).includes(number)
 
+  const validateInput = (name, number, existingContact) => {
+    if (isFieldEmpty(name) || isFieldEmpty(number)) {
+      alert('Please enter a name and number')
+      return false
+    }
+
+    if (!isValidNumber(number)) {
+      alert("Please enter a valid number, e.g. 040-123456 or 123-456")
+      return false
+    }
+
+    if (isNumberTaken(number)) {
+      alert(`${number} is already added to phonebook`)
+      return false
+    }
+
+    if (isNameTaken(name) && (existingContact.number === number)) {
+      alert(`${name} is already added to phonebook with the same number`)
+      return false
+    }
+
+    return true
+  }
+
   const confirmUpdate = (name) => {
     return window.confirm(
       `${name} is already added to the phonebook, ` +
       `replace the old number with a new one?`
-    );
+    )
+  }
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 5000)
   }
 
   const addContact = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
+    
+    const existingContact = persons.find(person => person.name === newName)
+    if (!validateInput(newName, newNumber, existingContact)) return
 
-    if (isFieldEmpty(newName) || isFieldEmpty(newNumber)) {
-      alert('Please enter a name and number')
-      return
-    }
-
-    if (!isValidNumber(newNumber)) {
-      alert("Please enter a valid number, e.g. 040-123456 or 123-456");
-      return
-    }
-
-    // handle duplicate name
+    // update existing contact
     if (isNameTaken(newName)) {
-      if (persons.find(person => person.name === newName).number === newNumber) {
-        alert(`${newName} is already added to phonebook with the same number`)
-        return
-      }
       if (!confirmUpdate(newName)) return
 
-      const id = persons.find(person => person.name === newName).id
       personService
-        .update(id, { name: newName, number: newNumber })
+        .update(existingContact.id, { name: newName, number: newNumber })
         .then(returnedContact => {
-          console.log("Contact updated:", returnedContact);
+          console.log("Contact updated:", returnedContact)
           setPersons(persons.map(person => person.name === newName ? returnedContact : person))
           setNewName('')
           setNewNumber('')
-          setNotification({ message: `Updated ${newName}`, type: 'success' })
-          setTimeout(() => {
-            setNotification(null)
-          }, 5000)
+          showNotification(`Updated ${newName}`, 'success')
         })
         .catch(() => {
           alert(`The contact '${newName}' was already deleted from the server`)
@@ -77,25 +91,16 @@ const App = () => {
       return
     }
 
-    // handle duplicate number
-    if (isNumberTaken(newNumber)) {
-      alert(`${newNumber} is already added to phonebook`)
-      return
-    }
-
     // add new contact
     const newContact = { name: newName, number: newNumber }
     personService
       .create(newContact)
       .then(returnedContact => {
-        console.log("Contact added:", returnedContact);
+        console.log("Contact added:", returnedContact)
         setPersons(persons.concat(returnedContact))
         setNewName('')
         setNewNumber('')
-        setNotification({ message: `Added ${newName}`, type: 'success' })
-        setTimeout(() => {
-          setNotification(null)
-        }, 5000)
+        showNotification(`Added ${newName}`, 'success')
       })
   }
 
