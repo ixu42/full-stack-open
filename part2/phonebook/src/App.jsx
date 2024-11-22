@@ -85,7 +85,7 @@ const App = () => {
           showNotification(`Updated ${newName}`, 'success')
         })
         .catch(() => {
-          alert(`The contact '${newName}' was already deleted from the server`)
+          showNotification(`The contact '${newName}' was already deleted from the server`, 'error')
           setPersons(persons.filter(person => person.name !== newName))
         })
       return
