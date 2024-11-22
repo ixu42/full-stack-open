@@ -46,7 +46,17 @@ function App() {
         ) : (
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {filteredCountries.map((country) => (
-              <li key={country.name.common}>{country.name.common}</li>
+              <li key={country.name.common}>
+                {country.name.common}
+                <button 
+                  onClick={() => setFilteredCountries([country])}
+                  style={{ 
+                    marginLeft: '5px',
+                    borderRadius: '3px',
+                   }}
+                >
+                  show</button>
+              </li>
             ))}
           </ul>
         )}
