@@ -49,6 +49,10 @@ const App = () => {
 
     // handle duplicate name
     if (isNameTaken(newName)) {
+      if (persons.find(person => person.name === newName).number === newNumber) {
+        alert(`${newName} is already added to phonebook with the same number`)
+        return
+      }
       if (!confirmUpdate(newName)) return
 
       const id = persons.find(person => person.name === newName).id
