@@ -21,6 +21,13 @@ const App = () => {
       })
   }, [])
 
+  const confirmUpdate = (name) => {
+    return window.confirm(
+      `${name} is already added to the phonebook, ` +
+      `replace the old number with a new one?`
+    );
+  }
+
   const addContact = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
@@ -33,7 +40,21 @@ const App = () => {
       return;
     }
     if (persons.map(person => person.name).includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
+      if (!confirmUpdate(newName))
+        return
+      const id = persons.find(person => person.name === newName).id
+      personService
+        .update(id, { name: newName, number: newNumber })
+        .then(returnedContact => {
+          console.log("Contact updated:", returnedContact);
+          setPersons(persons.map(person => person.name === newName ? returnedContact : person))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(() => {
+          alert(`The contact '${newName}' was already deleted from the server`)
+          setPersons(persons.filter(person => person.name !== newName))
+        })
       return
     }
     if (persons.map(person => person.number).includes(newNumber)) {
@@ -68,7 +89,7 @@ const App = () => {
 
   const contactsToShow = filterTerm === ''
     ? persons
-    : persons.filter(person => 
+    : persons.filter(person =>
       person.name.toLowerCase().includes(filterTerm.toLowerCase()))
 
   return (
@@ -76,11 +97,11 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filterTerm={filterTerm} handleFilterChange={handleFilterChange} />
       <h3>Add a new</h3>
-      <PersonForm 
-        addContact={addContact} 
-        newName={newName} 
-        handleNameChange={handleNameChange} 
-        newNumber={newNumber} 
+      <PersonForm
+        addContact={addContact}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
