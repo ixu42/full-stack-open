@@ -39,10 +39,7 @@ const Country = ({ country }) => {
   if (loading) return <p>Loading weather data...</p>
   if (error) return <p>{error}</p>
 
-  if (weather === null || weather.weather === null 
-      || weather.weather[0] === null || weather.weather[0].icon === null 
-      || weather.main === null || weather.main.temp === null 
-      || weather.wind === null || weather.wind.speed === null) {
+  if (!weather?.weather?.[0]?.icon || !weather?.main?.temp || !weather?.wind?.speed) {
     return <p>Data fetched incomplete</p>
   }
   const weatherIconUrl = `http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`
