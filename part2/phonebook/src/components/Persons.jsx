@@ -11,9 +11,9 @@ const Persons = ({
     }
     personService
       .remove(id)
-      .then(returnedContact => {
-        console.log("Contact deleted:", returnedContact)
-        setPersons(persons.filter(person => person.id !== returnedContact.id))
+      .then(() => {
+        console.log(`${name} deleted successfully`)
+        setPersons(persons.filter(person => person.id !== id))
       })
       .catch(error => {
         console.error("Error deleting contact:", error)
