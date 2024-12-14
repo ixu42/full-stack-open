@@ -3,7 +3,8 @@ const PersonForm = ({
   newName, 
   handleNameChange, 
   newNumber, 
-  handleNumberChange 
+  handleNumberChange,
+  isSubmitting
 }) => {
   return (
     <form onSubmit={addContact}>
@@ -22,7 +23,7 @@ const PersonForm = ({
         />
       </div>
       <div>
-        <button type="submit">add</button>
+        <button type="submit" disabled={isSubmitting}>add</button>
       </div>
     </form>
   )

@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterTerm, setFilterTerm] = useState('')
   const [notification, setNotification] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     console.log('effect')
@@ -67,13 +68,23 @@ const App = () => {
   const addContact = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
+
+    if (isSubmitting) return
+
+    setIsSubmitting(true)
     
     const existingContact = persons.find(person => person.name === newName)
-    if (!validateInput(newName, newNumber, existingContact)) return
+    if (!validateInput(newName, newNumber, existingContact)) {
+      setIsSubmitting(false)
+      return
+    }
 
     // update existing contact
     if (isNameTaken(newName)) {
-      if (!confirmUpdate(newName)) return
+      if (!confirmUpdate(newName)) {
+        setIsSubmitting(false)
+        return
+      }
 
       personService
         .update(existingContact.id, { name: newName, number: newNumber })
@@ -88,6 +99,7 @@ const App = () => {
           showNotification(`The contact '${newName}' was already deleted from the server`, 'error')
           setPersons(persons.filter(person => person.name !== newName))
         })
+        .finally(() => setIsSubmitting(false))
       return
     }
 
@@ -102,6 +114,7 @@ const App = () => {
         setNewNumber('')
         showNotification(`Added ${newName}`, 'success')
       })
+      .finally(() => setIsSubmitting(false))
   }
 
   const handleNameChange = (event) => {
@@ -136,6 +149,7 @@ const App = () => {
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
+        isSubmitting={isSubmitting}
       />
       <h3>Numbers</h3>
       <Persons {...{ contactsToShow, personService, persons, setPersons }} />
