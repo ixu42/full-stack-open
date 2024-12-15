@@ -114,6 +114,10 @@ const App = () => {
         setNewNumber('')
         showNotification(`Added ${newName}`, 'success')
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        showNotification(error.response.data.error, 'error')
+      })
       .finally(() => setIsSubmitting(false))
   }
 
