@@ -25,18 +25,12 @@ const App = () => {
 
   // helper functions for input validation
   const isFieldEmpty = (field) => field.trim() === ''
-  const isValidNumber = (number) => /^\d+(-\d+)*$/.test(number)
   const isNameTaken = (name) => persons.map(person => person.name).includes(name)
   const isNumberTaken = (number) => persons.map(person => person.number).includes(number)
 
   const validateInput = (name, number, existingContact) => {
     if (isFieldEmpty(name) || isFieldEmpty(number)) {
       alert('Please enter a name and number')
-      return false
-    }
-
-    if (!isValidNumber(number)) {
-      alert("Please enter a valid number, e.g. 040-123456 or 123-456")
       return false
     }
 
