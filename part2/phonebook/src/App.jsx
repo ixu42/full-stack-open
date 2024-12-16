@@ -89,9 +89,9 @@ const App = () => {
           setNewNumber('')
           showNotification(`Updated ${newName}`, 'success')
         })
-        .catch(() => {
-          showNotification(`The contact '${newName}' was already deleted from the server`, 'error')
-          setPersons(persons.filter(person => person.name !== newName))
+        .catch(error => {
+          console.log(error.response.data.error)
+          showNotification(error.response.data.error, 'error')
         })
         .finally(() => setIsSubmitting(false))
       return
