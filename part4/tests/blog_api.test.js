@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const assert = require('node:assert')
@@ -109,6 +109,40 @@ test('missing url property returns 400', async () => {
     .post('/api/blogs')
     .send(newBlogMissingUrl)
     .expect(400)
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+      const blogToDelete = blogsAtStart[0]
+    
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+
+      const titles = blogsAtEnd.map(r => r.title)
+      assert(!titles.includes(blogToDelete.title))
+  })
+
+  test('fails with status code 404 if blog does not exist', async () => {
+    const nonExistingId = await helper.nonExistingId()
+
+    await api
+        .delete(`/api/blogs/${nonExistingId}`)
+        .expect(404)
+  })
+
+  test('fails with status code 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api
+        .delete(`/api/blogs/${invalidId}`)
+        .expect(400)
+  })
 })
 
 after(async () => {
