@@ -41,6 +41,32 @@ test('blogs have id instead of _id', async () => {
   }
 })
 
+test('a valid blog can be added', async () => {
+  newBlog = {
+    title: "Best practices for backend development",
+    author: "Foo",
+    url: "https://example.com",
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  response = await api.get('/api/blogs')
+  const blogs = response.body
+
+  assert.strictEqual(blogs.length, helper.initialBlogs.length + 1, 'Blog count should increase by 1')
+
+  assert.ok(
+    // .some() checks at least one element in the array meets the condition
+    blogs.some(blog => blog.title === "Best practices for backend development"),
+    'Blog with correct title not found'
+  )
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
