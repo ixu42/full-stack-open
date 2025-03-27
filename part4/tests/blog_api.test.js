@@ -67,7 +67,7 @@ test('a valid blog can be added', async () => {
   )
 })
 
-test('likes property missing from request defaults to value 0', async () => {
+test('missing likes property it defaults to value 0', async () => {
   newBlog = {
     title: "Best practices for backend development",
     author: "Foo",
@@ -83,6 +83,32 @@ test('likes property missing from request defaults to value 0', async () => {
   const savedBlog = response.body
 
   assert.strictEqual(savedBlog.likes, 0, 'Expected "likes" to default to 0')
+})
+
+test('missing itle property returns 400', async () => {
+  newBlogMissingTitle = {
+    author: "Foo",
+    url: "https://example.com",
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogMissingTitle)
+    .expect(400)
+})
+
+test('missing url property returns 400', async () => {
+  newBlogMissingUrl = {
+    title: "Best practices for backend development",
+    author: "Foo",
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogMissingUrl)
+    .expect(400)
 })
 
 after(async () => {
