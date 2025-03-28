@@ -145,6 +145,44 @@ describe('deletion of a blog', () => {
   })
 })
 
+describe('updating a blog', () => {
+  test('succeeds with valid data', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const newData = {
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 10
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(newData)
+      .expect(200)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd[0].likes, 10)
+  })
+
+  test('fails with status code 404 if blog does not exist', async () => {
+    const nonExistingId = await helper.nonExistingId()
+
+    await api
+      .put(`/api/blogs/${nonExistingId}`)
+      .expect(404)
+  })
+
+  test('fails with status code 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api
+        .put(`/api/blogs/${invalidId}`)
+        .expect(400)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
