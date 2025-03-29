@@ -33,6 +33,14 @@ describe('when there is initially one user in db', () => {
   describe('test user creation', () => {
     const url = '/api/users'
 
+    const createUser = async (userData, expectedStatus) => {
+      return await api
+        .post(url)
+        .send(userData)
+        .expect(expectedStatus)
+        .expect('Content-Type', /application\/json/)
+    }
+
     test('succeeds with a fresh username', async () => {
       const usersAtStart = await helper.usersInDb()
 
@@ -42,11 +50,7 @@ describe('when there is initially one user in db', () => {
         password: 'securepassword123'
       }
 
-      await api
-        .post(url)
-        .send(newUser)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
+      await createUser(newUser, 201)
 
       const usersAtEnd = await helper.usersInDb()
       assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
@@ -56,19 +60,15 @@ describe('when there is initially one user in db', () => {
     })
 
     test('fails with status code 400 if username already taken', async () => {
-        const newUser = {
-          username: 'initial user',
-          name: 'initial',
-          password: 'securepassword123'
-        }
+      const newUser = {
+        username: 'initial user',
+        name: 'initial',
+        password: 'securepassword123'
+      }
 
-        const response = await api
-          .post(url)
-          .send(newUser)
-          .expect(400)
-          .expect('Content-Type', /application\/json/)
+      const response = await createUser(newUser, 400)
 
-        assert(response.body.error.includes('expected `username` to be unique'))
+      assert(response.body.error.includes('expected `username` to be unique'))
     })
 
     test('fails with status code 400 if missing username', async () => {
@@ -77,13 +77,9 @@ describe('when there is initially one user in db', () => {
         password: 'securepassword123'
       }
 
-        const response = await api
-          .post(url)
-          .send(newUser)
-          .expect(400)
-          .expect('Content-Type', /application\/json/)
+      const response = await createUser(newUser, 400)
 
-        assert(response.body.error.includes('username and password are required'))
+      assert(response.body.error.includes('username and password are required'))
     })
 
     test('fails with status code 400 if missing password', async () => {
@@ -92,11 +88,7 @@ describe('when there is initially one user in db', () => {
         name: 'test'
       }
 
-      const response = await api
-        .post(url)
-        .send(newUser)
-        .expect(400)
-        .expect('Content-Type', /application\/json/)
+      const response = await createUser(newUser, 400)
 
       assert(response.body.error.includes('username and password are required'))
     })
@@ -108,13 +100,9 @@ describe('when there is initially one user in db', () => {
         password: 'securepassword123'
       }
 
-        const response = await api
-          .post(url)
-          .send(newUser)
-          .expect(400)
-          .expect('Content-Type', /application\/json/)
+      const response = await createUser(newUser, 400)
 
-        assert(response.body.error.includes('username and password must be at least 3 characters long'))
+      assert(response.body.error.includes('username and password must be at least 3 characters long'))
     })
 
     test('fails with status code 400 if password contains less than 3 chars', async () => {
@@ -124,11 +112,7 @@ describe('when there is initially one user in db', () => {
         password: 'aa'
       }
 
-      const response = await api
-        .post(url)
-        .send(newUser)
-        .expect(400)
-        .expect('Content-Type', /application\/json/)
+      const response = await createUser(newUser, 400)
 
       assert(response.body.error.includes('username and password must be at least 3 characters long'))
     })
