@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWQiOiI2N2U4MmU0NGUzMzAwNzVmMWI2OTVjMTkiLCJpYXQiOjE3NDMyNzEwNjF9.mkG2ibkwNKhmdWA4V_FVjiEOkL29loFpQL2JR-QISGs
 
 {
-  "title": "Best practices for backend development - v1",
+  "title": "Best practices for backend development - v2",
   "author": "Foo",
   "url": "https://example.com",
   "likes": 42
