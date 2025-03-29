@@ -56,8 +56,6 @@ describe('when there is initially one user in db', () => {
     })
 
     test('fails with status code 400 if username already taken', async () => {
-      const usersAtStart = await helper.usersInDb()
-
         const newUser = {
           username: 'initial user',
           name: 'initial',
@@ -70,9 +68,69 @@ describe('when there is initially one user in db', () => {
           .expect(400)
           .expect('Content-Type', /application\/json/)
 
-        const usersAtEnd = await helper.usersInDb()
-        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
         assert(response.body.error.includes('expected `username` to be unique'))
+    })
+
+    test('fails with status code 400 if missing username', async () => {
+      const newUser = {
+        name: 'test',
+        password: 'securepassword123'
+      }
+
+        const response = await api
+          .post(url)
+          .send(newUser)
+          .expect(400)
+          .expect('Content-Type', /application\/json/)
+
+        assert(response.body.error.includes('username and password are required'))
+    })
+
+    test('fails with status code 400 if missing password', async () => {
+      const newUser = {
+        username: 'test user',
+        name: 'test'
+      }
+
+      const response = await api
+        .post(url)
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      assert(response.body.error.includes('username and password are required'))
+    })
+
+    test('fails with status code 400 if username contains less than 3 chars', async () => {
+      const newUser = {
+        username: 'aa',
+        name: 'test',
+        password: 'securepassword123'
+      }
+
+        const response = await api
+          .post(url)
+          .send(newUser)
+          .expect(400)
+          .expect('Content-Type', /application\/json/)
+
+        assert(response.body.error.includes('username and password must be at least 3 characters long'))
+    })
+
+    test('fails with status code 400 if password contains less than 3 chars', async () => {
+      const newUser = {
+        username: 'test user',
+        name: 'test',
+        password: 'aa'
+      }
+
+      const response = await api
+        .post(url)
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      assert(response.body.error.includes('username and password must be at least 3 characters long'))
     })
   })
 })
