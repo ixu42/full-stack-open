@@ -15,6 +15,7 @@ describe('when there is initially one user in db', () => {
     const passwordHash = await bcrypt.hash('securepw', 10)
     const user = new User({
       username: 'initial user',
+      name: 'initial',
       passwordHash
     })
     await user.save()

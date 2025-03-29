@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 content-type: application/json
 
 {
-  "title": "Best practices for backend development",
+  "title": "Best practices for backend development - v1",
   "author": "Foo",
   "url": "https://example.com",
   "likes": 42
