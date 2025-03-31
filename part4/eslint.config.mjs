@@ -1,14 +1,14 @@
-import { defineConfig } from "eslint/config"
-import globals from "globals"
+import { defineConfig } from 'eslint/config'
+import globals from 'globals'
 
 export default defineConfig([
   {
-    files: ["**/*.js"],
+    files: ['**/*.js'],
     languageOptions: {
-      sourceType: "commonjs",
+      sourceType: 'commonjs',
       globals: {
-        ...globals.node,
-      },
-    },
-  },
+        ...globals.node
+      }
+    }
+  }
 ])

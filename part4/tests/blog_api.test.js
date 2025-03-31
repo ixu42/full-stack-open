@@ -51,8 +51,10 @@ describe('when there are some blogs saved initially', () => {
     }
     token = jwt.sign(userForToken, process.env.JWT_SECRET_KEY)
 
-    let blogObjs = helper.initialBlogs.map(blog => new Blog({ ...blog, user: user._id }))
-    const promisedArray = blogObjs.map(blog => blog.save())
+    let blogObjs = helper.initialBlogs.map(
+      (blog) => new Blog({ ...blog, user: user._id })
+    )
+    const promisedArray = blogObjs.map((blog) => blog.save())
     await Promise.all(promisedArray)
   })
 
@@ -77,9 +79,9 @@ describe('when there are some blogs saved initially', () => {
   describe('addition of a blog', () => {
     const url = '/api/blogs'
     const newBlog = {
-      title: "Best practices for backend development",
-      author: "Foo",
-      url: "https://example.com",
+      title: 'Best practices for backend development',
+      author: 'Foo',
+      url: 'https://example.com',
       likes: 42
     }
 
@@ -98,15 +100,15 @@ describe('when there are some blogs saved initially', () => {
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-      const titles = blogsAtEnd.map(r => r.title)
+      const titles = blogsAtEnd.map((r) => r.title)
       assert(titles.includes(newBlog.title))
     })
 
     test('missing likes property it defaults to value 0', async () => {
       const newBlog = {
-        title: "Best practices for backend development",
-        author: "Foo",
-        url: "https://example.com"
+        title: 'Best practices for backend development',
+        author: 'Foo',
+        url: 'https://example.com'
       }
 
       const response = await createBlog(newBlog, 201)
@@ -115,8 +117,8 @@ describe('when there are some blogs saved initially', () => {
 
     test('missing title property returns 400', async () => {
       const newBlog = {
-        author: "Foo",
-        url: "https://example.com",
+        author: 'Foo',
+        url: 'https://example.com',
         likes: 42
       }
 
@@ -125,8 +127,8 @@ describe('when there are some blogs saved initially', () => {
 
     test('missing url property returns 400', async () => {
       const newBlog = {
-        title: "Best practices for backend development",
-        author: "Foo",
+        title: 'Best practices for backend development',
+        author: 'Foo',
         likes: 42
       }
 
@@ -134,10 +136,7 @@ describe('when there are some blogs saved initially', () => {
     })
 
     test('missing jwt token returns 401', async () => {
-      const response = await api
-        .post(url)
-        .send(newBlog)
-        .expect(401)
+      const response = await api.post(url).send(newBlog).expect(401)
 
       assert(response.body.error.includes('Invalid token'))
     })
@@ -158,7 +157,7 @@ describe('when there are some blogs saved initially', () => {
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 
-      const titles = blogsAtEnd.map(r => r.title)
+      const titles = blogsAtEnd.map((r) => r.title)
       assert(!titles.includes(blogToDelete.title))
     })
 
@@ -185,10 +184,7 @@ describe('when there are some blogs saved initially', () => {
         likes: 10
       }
 
-      await api
-        .put(`${url}/${blogToUpdate.id}`)
-        .send(newData)
-        .expect(200)
+      await api.put(`${url}/${blogToUpdate.id}`).send(newData).expect(200)
 
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd[0].likes, 10)

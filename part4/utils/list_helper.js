@@ -11,11 +11,14 @@ const totalLikes = (blogs) => {
 const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return null
 
-  const fav = blogs.reduce((fav, blog) => (blog.likes > fav.likes ? blog : fav), blogs[0])
+  const fav = blogs.reduce(
+    (fav, blog) => (blog.likes > fav.likes ? blog : fav),
+    blogs[0]
+  )
   return {
     title: fav.title,
     author: fav.author,
-    likes: fav.likes,
+    likes: fav.likes
   }
 }
 
@@ -26,7 +29,10 @@ const mostBlogs = (blogs) => {
   const authorCounts = _.countBy(blogs, 'author')
 
   // find author with highest count
-  const topAuthor = _.maxBy(Object.keys(authorCounts), (author) => authorCounts[author])
+  const topAuthor = _.maxBy(
+    Object.keys(authorCounts),
+    (author) => authorCounts[author]
+  )
 
   return { author: topAuthor, blogs: authorCounts[topAuthor] }
 }
@@ -39,11 +45,18 @@ const mostLikes = (blogs) => {
     _.sumBy(authorBlogs, 'likes')
   )
 
-  const topAuthor = _.maxBy(Object.keys(likesByAuthor), (author) => likesByAuthor[author])
+  const topAuthor = _.maxBy(
+    Object.keys(likesByAuthor),
+    (author) => likesByAuthor[author]
+  )
 
   return { author: topAuthor, likes: likesByAuthor[topAuthor] }
 }
 
 module.exports = {
-  dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes
+  dummy,
+  totalLikes,
+  favoriteBlog,
+  mostBlogs,
+  mostLikes
 }

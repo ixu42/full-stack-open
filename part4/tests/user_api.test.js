@@ -56,7 +56,7 @@ describe('when there is initially one user in db', () => {
       const usersAtEnd = await helper.usersInDb()
       assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
-      const usernames = usersAtEnd.map(u => u.username)
+      const usernames = usersAtEnd.map((u) => u.username)
       assert(usernames.includes(newUser.username))
     })
 
@@ -103,7 +103,11 @@ describe('when there is initially one user in db', () => {
 
       const response = await createUser(newUser, 400)
 
-      assert(response.body.error.includes('username and password must be at least 3 characters long'))
+      assert(
+        response.body.error.includes(
+          'username and password must be at least 3 characters long'
+        )
+      )
     })
 
     test('fails with status code 400 if password contains less than 3 chars', async () => {
@@ -115,7 +119,11 @@ describe('when there is initially one user in db', () => {
 
       const response = await createUser(newUser, 400)
 
-      assert(response.body.error.includes('username and password must be at least 3 characters long'))
+      assert(
+        response.body.error.includes(
+          'username and password must be at least 3 characters long'
+        )
+      )
     })
   })
 })

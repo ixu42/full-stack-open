@@ -37,11 +37,14 @@ const initialBlogs = [
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2
-  }  
+  }
 ]
 
 const generateNonExistingId = async () => {
-  const blog = new Blog({ title: 'willremovethissoon',  url: 'http://example.com'})
+  const blog = new Blog({
+    title: 'willremovethissoon',
+    url: 'http://example.com'
+  })
   await blog.save()
   await blog.deleteOne()
 
@@ -50,14 +53,17 @@ const generateNonExistingId = async () => {
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-  return blogs.map(blog => blog.toJSON())
+  return blogs.map((blog) => blog.toJSON())
 }
 
 const usersInDb = async () => {
   const users = await User.find({})
-  return users.map(user => user.toJSON())
+  return users.map((user) => user.toJSON())
 }
 
 module.exports = {
-  initialBlogs, generateNonExistingId, blogsInDb, usersInDb
+  initialBlogs,
+  generateNonExistingId,
+  blogsInDb,
+  usersInDb
 }
