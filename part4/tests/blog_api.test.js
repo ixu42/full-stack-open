@@ -2,25 +2,56 @@ const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const assert = require('node:assert')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let token
 
 const testNonExistingId = async (endpoint, method) => {
   const nonExistingId = await helper.generateNonExistingId()
-  await api[method](`${endpoint}/${nonExistingId}`).expect(404)
+  await api[method](`${endpoint}/${nonExistingId}`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(404)
 }
 
 const testInvalidId = async (endpoint, method) => {
   const invalidId = '5a3d5da59070081a82a3445'
-  await api[method](`${endpoint}/${invalidId}`).expect(400)
+  await api[method](`${endpoint}/${invalidId}`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(400)
 }
 
 describe('when there are some blogs saved initially', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
-    const blogObjs = helper.initialBlogs.map(blog => new Blog(blog))
+    await User.deleteMany({})
+
+    // create a user in db if it does not exist yet
+    let user = await User.findOne({ username: 'testuser2' })
+    if (!user) {
+      const passwordHash = await bcrypt.hash('securepw', 10)
+      const testUser = new User({
+        username: 'test user',
+        name: 'test',
+        passwordHash
+      })
+      await testUser.save()
+    }
+    user = await User.findOne({ username: 'test user' })
+
+    // generate a jwt token for the user
+    const userForToken = {
+      username: user.username,
+      id: user._id
+    }
+    token = jwt.sign(userForToken, process.env.JWT_SECRET_KEY)
+
+    let blogObjs = helper.initialBlogs.map(blog => new Blog({ ...blog, user: user._id }))
     const promisedArray = blogObjs.map(blog => blog.save())
     await Promise.all(promisedArray)
   })
@@ -44,84 +75,83 @@ describe('when there are some blogs saved initially', () => {
   })
 
   describe('addition of a blog', () => {
-    const blogToAdd = {
-      title: "Best practices for backend development",
-      author: "Foo",
-      url: "https://example.com",
-      likes: 42
+    const url = '/api/blogs'
+
+    const createBlog = async (blogData, expectedStatus) => {
+      return await api
+        .post(url)
+        .set('Authorization', `Bearer ${token}`)
+        .send(blogData)
+        .expect(expectedStatus)
+        .expect('Content-Type', /application\/json/)
     }
 
     test('a valid blog can be added', async () => {
-      newBlog = blogToAdd
-      url = '/api/blogs'
+      const newBlog = {
+        title: "Best practices for backend development",
+        author: "Foo",
+        url: "https://example.com",
+        likes: 42
+      }
 
-      await api
-        .post(url)
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
+      await createBlog(newBlog, 201)
 
-      blogsAtEnd = await helper.blogsInDb()
-
+      const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-      titles = blogsAtEnd.map(r => r.title)
+      const titles = blogsAtEnd.map(r => r.title)
       assert(titles.includes(newBlog.title))
     })
 
     test('missing likes property it defaults to value 0', async () => {
-      newBlog = blogToAdd
-      delete newBlog.likes
+      const newBlog = {
+        title: "Best practices for backend development",
+        author: "Foo",
+        url: "https://example.com"
+      }
 
-      response = await api
-        .post(url)
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
-
-      const savedBlog = response.body
-
-      assert.strictEqual(savedBlog.likes, 0)
+      const response = await createBlog(newBlog, 201)
+      assert.strictEqual(response.body.likes, 0)
     })
 
     test('missing title property returns 400', async () => {
-      newBlog = blogToAdd
-      delete newBlog.title
+      const newBlog = {
+        author: "Foo",
+        url: "https://example.com",
+        likes: 42
+      }
 
-      await api
-        .post(url)
-        .send(newBlog)
-        .expect(400)
+      await createBlog(newBlog, 400)
     })
 
     test('missing url property returns 400', async () => {
-      newBlog = blogToAdd
-      delete newBlog.url
+      const newBlog = {
+        title: "Best practices for backend development",
+        author: "Foo",
+        likes: 42
+      }
 
-      await api
-        .post(url)
-        .send(newBlog)
-        .expect(400)
+      await createBlog(newBlog, 400)
     })
   })
 
   describe('deletion of a blog', () => {
-    url = '/api/blogs'
+    const url = '/api/blogs'
 
     test('succeeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
-        const blogToDelete = blogsAtStart[0]
+      const blogToDelete = blogsAtStart[0]
 
-        await api
-          .delete(`${url}/${blogToDelete.id}`)
-          .expect(204)
+      await api
+        .delete(`${url}/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204)
 
-        const blogsAtEnd = await helper.blogsInDb()
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 
-        assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
-
-        const titles = blogsAtEnd.map(r => r.title)
-        assert(!titles.includes(blogToDelete.title))
+      const titles = blogsAtEnd.map(r => r.title)
+      assert(!titles.includes(blogToDelete.title))
     })
 
     test('fails with status code 404 if blog does not exist', async () => {
@@ -134,7 +164,7 @@ describe('when there are some blogs saved initially', () => {
   })
 
   describe('updating a blog', () => {
-    url = '/api/blogs'
+    const url = '/api/blogs'
 
     test('succeeds with valid data', async () => {
       const blogsAtStart = await helper.blogsInDb()
@@ -152,8 +182,8 @@ describe('when there are some blogs saved initially', () => {
         .send(newData)
         .expect(200)
 
-        const blogsAtEnd = await helper.blogsInDb()
-        assert.strictEqual(blogsAtEnd[0].likes, 10)
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd[0].likes, 10)
     })
 
     test('fails with status code 404 if blog does not exist', async () => {
