@@ -76,6 +76,12 @@ describe('when there are some blogs saved initially', () => {
 
   describe('addition of a blog', () => {
     const url = '/api/blogs'
+    const newBlog = {
+      title: "Best practices for backend development",
+      author: "Foo",
+      url: "https://example.com",
+      likes: 42
+    }
 
     const createBlog = async (blogData, expectedStatus) => {
       return await api
@@ -87,13 +93,6 @@ describe('when there are some blogs saved initially', () => {
     }
 
     test('a valid blog can be added', async () => {
-      const newBlog = {
-        title: "Best practices for backend development",
-        author: "Foo",
-        url: "https://example.com",
-        likes: 42
-      }
-
       await createBlog(newBlog, 201)
 
       const blogsAtEnd = await helper.blogsInDb()
@@ -132,6 +131,15 @@ describe('when there are some blogs saved initially', () => {
       }
 
       await createBlog(newBlog, 400)
+    })
+
+    test('missing jwt token returns 401', async () => {
+      const response = await api
+        .post(url)
+        .send(newBlog)
+        .expect(401)
+
+      assert(response.body.error.includes('Invalid token'))
     })
   })
 
