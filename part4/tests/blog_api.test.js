@@ -57,7 +57,7 @@ describe('when there are some blogs saved initially', () => {
   })
 
   test('blogs return in correct amount and in JSON', async () => {
-    response = await api
+    const response = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)

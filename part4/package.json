@@ -5,7 +5,9 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
-    "test": "cross-env NODE_ENV=test node --test"
+    "test": "cross-env NODE_ENV=test node --test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "Ivy Xu",
@@ -22,7 +24,10 @@
     "mongoose": "^8.12.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.23.0",
     "cross-env": "^7.0.3",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
     "supertest": "^7.1.0"
   }
 }
