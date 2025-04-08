@@ -8,11 +8,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: '',
-  })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -67,34 +62,17 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-
-    const blogObject = newBlog
-
+  const addBlog = async (newBlog) => {
     try {
-      const returnedBlogs = await blogService.create(blogObject)
+      const returnedBlogs = await blogService.create(newBlog)
       informUser(`a new blog ${newBlog.title} by ${newBlog.author} added`, false)
       setBlogs(blogs.concat(returnedBlogs))
-      setNewBlog({
-        title: '',
-        author: '',
-        url: '',
-      })
     } catch (exception) {
       const errorMessage = exception.response
         ? exception.response.data.error
         : exception.message
       informUser(errorMessage, true)
     }
-  }
-
-  const handleBlogChange = (event) => {
-    const { name, value } = event.target
-    setNewBlog((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
   }
 
   if (user === null) {
@@ -115,7 +93,7 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
-      <BlogForm {...{ addBlog, handleBlogChange, newBlog }} />
+      <BlogForm createBlog={addBlog} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
