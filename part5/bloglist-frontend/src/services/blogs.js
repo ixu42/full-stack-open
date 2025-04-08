@@ -17,8 +17,13 @@ const create = async newObject => {
     headers: { Authorization: token },
   }
 
-  const response = await axios.post(baseUrl, newObject, config)
-  return response.data
+  try {
+    const response = await axios.post(baseUrl, newObject, config)
+    return response.data
+  } catch (error) {
+    console.error("error during blog creation:", error)
+    throw error
+  }
 }
 
 export default { getAll, create, setToken }
