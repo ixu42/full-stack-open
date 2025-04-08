@@ -8,8 +8,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState({
     content: '',
@@ -41,16 +39,12 @@ const App = () => {
     }, 5000)
   }
 
-  const handleLogin = async event => {
-    event.preventDefault()
-
+  const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       informUser('wrong username or password', true)
     }
@@ -62,7 +56,7 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (newBlog) => {
+  const addBlog = async newBlog => {
     try {
       const returnedBlogs = await blogService.create(newBlog)
       informUser(`a new blog ${newBlog.title} by ${newBlog.author} added`, false)
@@ -80,7 +74,7 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
         <Notification message={message} />
-        <LoginForm {...{ handleLogin, username, password, setUsername, setPassword }} />
+        <LoginForm loginUser={handleLogin} />
       </div>
     )
   }
