@@ -91,6 +91,18 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blogToRemove) => {
+    try {
+      if (blogToRemove.user.username !== user.username) {
+        throw new Error('You do not have permission to remove this blog.')
+      }
+      await blogService.remove(blogToRemove.id)
+      setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+    } catch (exception) {
+      informUserError(exception)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -113,7 +125,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog}/>
       )}
     </div>
   )

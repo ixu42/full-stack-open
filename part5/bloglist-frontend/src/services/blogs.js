@@ -42,4 +42,19 @@ const update = async (updateContent, blogId) => {
   }
 }
 
-export default { getAll, create, update, setToken }
+const remove = async (blogId) => {
+  const url = `${baseUrl}/${blogId}`
+
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  try {
+    await axios.delete(url, config)
+  } catch (error) {
+    console.error("error during blog deletion:", error)
+    throw error
+  }
+}
+
+export default { getAll, create, update, remove, setToken }
