@@ -21,7 +21,7 @@ const Blog = ({ blog, updateBlog }) => {
       likes: blog.likes + 1,
       user: blog.user.id
     }
-    updateBlog(updatedBlog)
+    updateBlog(updatedBlog, blog.user)
   }
 
   if (!showDetails) return (

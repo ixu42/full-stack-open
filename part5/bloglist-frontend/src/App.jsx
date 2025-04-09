@@ -76,14 +76,15 @@ const App = () => {
     }
   }
 
-  const updateBlog = async updatedBlog => {
+  const updateBlog = async (updatedBlog, userData) => {
     try {
-      console.log("updatedBlog:", updatedBlog)
       const returnedBlog = await blogService.update(updatedBlog, updatedBlog.id)
-      console.log("returnedBlog", returnedBlog)
-      console.log("all blogs:", blogs)
+      const blogToBeAddedToList = {
+        ...returnedBlog,
+        user: userData
+      }
       setBlogs(blogs.map(blog => 
-        blog.id === updatedBlog.id ? returnedBlog : blog
+        blog.id === updatedBlog.id ? blogToBeAddedToList : blog
       ))
     } catch (exception) {
       informUserError(exception)
