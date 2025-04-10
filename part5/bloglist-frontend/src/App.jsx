@@ -12,14 +12,12 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState({
     content: '',
-    isError: false,
+    isError: false
   })
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -65,11 +63,14 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async newBlog => {
+  const addBlog = async (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
       const addedBlog = await blogService.create(newBlog)
-      informUser(`a new blog ${newBlog.title} by ${newBlog.author} added`, false)
+      informUser(
+        `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        false
+      )
       setBlogs(blogs.concat(addedBlog))
     } catch (exception) {
       informUserError(exception)
@@ -79,9 +80,9 @@ const App = () => {
   const updateBlog = async (updatedBlog) => {
     try {
       const returnedBlog = await blogService.update(updatedBlog, updatedBlog.id)
-      setBlogs(blogs.map(blog =>
-        blog.id === returnedBlog.id ? returnedBlog : blog
-      ))
+      setBlogs(
+        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
+      )
     } catch (exception) {
       informUserError(exception)
     }
@@ -93,7 +94,7 @@ const App = () => {
         throw new Error('You do not have permission to remove this blog.')
       }
       await blogService.remove(blogToRemove.id)
-      setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+      setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id))
     } catch (exception) {
       informUserError(exception)
     }
@@ -117,12 +118,19 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
-      <Togglable buttonLabel='new note' ref={blogFormRef}>
+      <Togglable buttonLabel="new note" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} />
-      )}
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            removeBlog={removeBlog}
+          />
+        ))}
     </div>
   )
 }

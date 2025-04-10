@@ -20,7 +20,13 @@ describe('<Blog />', () => {
   })
 
   test('renders blog title and author but not url or likes', () => {
-    render(<Blog blog={blog} updateBlog={mockUpdateBlog} removeBlog={mockRemoveBlog} />)
+    render(
+      <Blog
+        blog={blog}
+        updateBlog={mockUpdateBlog}
+        removeBlog={mockRemoveBlog}
+      />
+    )
 
     screen.getByText('Testing React apps', { exact: false })
     screen.getByText('Foo', { exact: false })
@@ -30,7 +36,13 @@ describe('<Blog />', () => {
   })
 
   test('renders blog url and likes if clicking view button', async () => {
-    render(<Blog blog={blog} updateBlog={mockUpdateBlog} removeBlog={mockRemoveBlog} />)
+    render(
+      <Blog
+        blog={blog}
+        updateBlog={mockUpdateBlog}
+        removeBlog={mockRemoveBlog}
+      />
+    )
 
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
@@ -41,7 +53,13 @@ describe('<Blog />', () => {
   })
 
   test('clicking like button twice calls event handler twice', async () => {
-    render(<Blog blog={blog} updateBlog={mockUpdateBlog} removeBlog={mockRemoveBlog} />)
+    render(
+      <Blog
+        blog={blog}
+        updateBlog={mockUpdateBlog}
+        removeBlog={mockRemoveBlog}
+      />
+    )
 
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')

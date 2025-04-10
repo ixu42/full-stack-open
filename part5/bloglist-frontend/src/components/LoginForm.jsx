@@ -5,7 +5,7 @@ const LoginForm = ({ loginUser }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = event => {
+  const handleLogin = (event) => {
     event.preventDefault()
     loginUser(username, password)
     setUsername('')

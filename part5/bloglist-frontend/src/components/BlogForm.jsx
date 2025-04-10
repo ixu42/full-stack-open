@@ -5,16 +5,16 @@ const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
-    url: '',
+    url: ''
   })
 
-  const addBlog = event => {
+  const addBlog = (event) => {
     event.preventDefault()
     createBlog(newBlog)
     setNewBlog({
       title: '',
       author: '',
-      url: '',
+      url: ''
     })
   }
 
@@ -22,7 +22,7 @@ const BlogForm = ({ createBlog }) => {
     const { name, value } = event.target
     setNewBlog((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }))
   }
 

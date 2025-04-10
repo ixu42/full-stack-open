@@ -1,12 +1,12 @@
 import axios from 'axios'
 const baseUrl = '/api/login'
 
-const login = async credentials => {
+const login = async (credentials) => {
   try {
     const response = await axios.post(baseUrl, credentials)
     return response.data
   } catch (error) {
-    console.error("error during login:", error)
+    console.error('error during login:', error)
     throw error
   }
 }
