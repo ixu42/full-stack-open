@@ -13,7 +13,7 @@ describe('<Blog />', () => {
       author: 'Foo',
       url: 'https://example.com',
       likes: 5,
-      user: { name: 'Bar' }
+      user: { id: '67f7868d38bf55b12a1cb93f', name: 'Bar', username: 'Bar' }
     }
     mockUpdateBlog = vi.fn()
     mockRemoveBlog = vi.fn()
