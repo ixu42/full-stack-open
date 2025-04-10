@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 test('renders blog title and author but not url or likes', () => {
@@ -20,4 +21,28 @@ test('renders blog title and author but not url or likes', () => {
   const elemLikes = screen.queryByText('likes 5')
   expect(elemUrl).toBeNull()
   expect(elemLikes).toBeNull()
+})
+
+
+test('renders blog url and likes if clicking view button', async () => {
+  const blog = {
+    "title": "Testing React apps",
+    "author": "Foo",
+    "url": "https://example.com",
+    "likes": 5,
+    user: {
+      name: "Bar"
+    }
+  }
+
+  const mockUpdateBlog = vi.fn()
+  const mockRemoveBlog = vi.fn()
+
+  render(<Blog blog={blog} updateBlog={mockUpdateBlog} removeBlog={mockRemoveBlog} />)
+  const user = userEvent.setup()
+  const button = screen.getByText('view')
+  await user.click(button)
+
+  screen.getByText('https://example.com')
+  screen.getByText('likes 5')
 })
