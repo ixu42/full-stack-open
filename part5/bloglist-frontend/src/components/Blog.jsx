@@ -22,7 +22,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
       likes: blog.likes + 1,
       user: blog.user.id
     }
-    updateBlog(updatedBlog, blog.user)
+    updateBlog(updatedBlog)
   }
 
   const handleRemove = () => {
@@ -63,11 +63,14 @@ Blog.propTypes = {
     author: PropTypes.string,
     url: PropTypes.string.isRequired,
     likes: PropTypes.number,
-    user: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string,
-      username: PropTypes.string.isRequired,
-    }).isRequired
+    user: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string,
+        username: PropTypes.string.isRequired
+      })
+    ])
   }).isRequired,
   updateBlog: PropTypes.func.isRequired,
   removeBlog: PropTypes.func.isRequired

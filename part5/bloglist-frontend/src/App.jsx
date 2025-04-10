@@ -68,23 +68,19 @@ const App = () => {
   const addBlog = async newBlog => {
     try {
       blogFormRef.current.toggleVisibility()
-      const returnedBlogs = await blogService.create(newBlog)
+      const addedBlog = await blogService.create(newBlog)
       informUser(`a new blog ${newBlog.title} by ${newBlog.author} added`, false)
-      setBlogs(blogs.concat(returnedBlogs))
+      setBlogs(blogs.concat(addedBlog))
     } catch (exception) {
       informUserError(exception)
     }
   }
 
-  const updateBlog = async (updatedBlog, userData) => {
+  const updateBlog = async (updatedBlog) => {
     try {
       const returnedBlog = await blogService.update(updatedBlog, updatedBlog.id)
-      const blogToBeAddedToList = {
-        ...returnedBlog,
-        user: userData
-      }
-      setBlogs(blogs.map(blog => 
-        blog.id === updatedBlog.id ? blogToBeAddedToList : blog
+      setBlogs(blogs.map(blog =>
+        blog.id === returnedBlog.id ? returnedBlog : blog
       ))
     } catch (exception) {
       informUserError(exception)
@@ -125,7 +121,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog}/>
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} />
       )}
     </div>
   )
