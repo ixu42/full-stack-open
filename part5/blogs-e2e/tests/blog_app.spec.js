@@ -41,7 +41,7 @@ describe('Blog app', () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, 'testuser', 'securepassword')
     })
-  
+
     test('a new blog can be created', async ({ page }) => {
       const newBlog = {
         title: 'End to end testing with Playwright',
@@ -54,18 +54,27 @@ describe('Blog app', () => {
     })
 
     describe('a blog exists', () => {
+      let newBlog = {
+        title: 'End to end testing with Playwright',
+        author: 'Matti',
+        url: 'www.example.com'
+      }
+
       beforeEach(async ({ page }) => {
-        await createBlog(page, {
-          title: 'End to end testing with Playwright',
-          author: 'Matti',
-          url: 'www.example.com'
-        })
+        await createBlog(page, newBlog)
       })
 
-      test('a blog can be liked', async ({page}) => {
+      test('a blog can be liked', async ({ page }) => {
         await page.getByRole('button', { name: 'view' }).click()
         await page.getByRole('button', { name: 'like' }).click()
         await expect(page.getByText('likes 1')).toBeVisible()
+      })
+
+      test('a blog can be deleted by the user who added it', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept())
+        await page.getByRole('button', { name: 'view' }).click()
+        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(page.getByText(newBlog.title)).toHaveCount(0)
       })
     })
   })
