@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-import { loginWith } from './helper'
+import { loginWith, createBlog } from './helper'
 
 describe('Blog app', () => {
   beforeEach(async ({ request, page }) => {
@@ -34,6 +34,23 @@ describe('Blog app', () => {
       await expect(errorDiv).toContainText('wrong username or password')
       await expect(errorDiv).toHaveCSS('border', '1px solid rgb(255, 0, 0)')
       await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
+    })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'testuser', 'securepassword')
+    })
+  
+    test('a new blog can be created', async ({ page }) => {
+      const newBlog = {
+        title: 'End to end testing with Playwright',
+        author: 'Matti',
+        url: 'www.example.com'
+      }
+      await createBlog(page, newBlog)
+      await expect(page.getByText(`${newBlog.title} ${newBlog.author} view`))
+        .toBeVisible()
     })
   })
 })
