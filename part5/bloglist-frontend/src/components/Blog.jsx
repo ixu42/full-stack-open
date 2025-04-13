@@ -34,7 +34,7 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
 
   if (!showDetails)
     return (
-      <div style={blogStyle}>
+      <div className='blog' style={blogStyle}>
         <div>
           {blog.title} {blog.author}{' '}
           <button onClick={toggleShowDetails}>view</button>
@@ -43,7 +43,7 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
     )
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <div>
         {blog.title} {blog.author}{' '}
         <button onClick={toggleShowDetails}>hide</button>
