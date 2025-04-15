@@ -4,6 +4,7 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
   let blog
+  let loggedInUser
   let mockUpdateBlog
   let mockRemoveBlog
 
@@ -15,6 +16,13 @@ describe('<Blog />', () => {
       likes: 5,
       user: { id: '67f7868d38bf55b12a1cb93f', name: 'Bar', username: 'Bar' }
     }
+
+    loggedInUser = {
+      id: '67f7868d38bf55b12a1cb93g',
+      name: 'Baz',
+      username: 'Baz'
+    }
+
     mockUpdateBlog = vi.fn()
     mockRemoveBlog = vi.fn()
   })
@@ -25,6 +33,7 @@ describe('<Blog />', () => {
         blog={blog}
         updateBlog={mockUpdateBlog}
         removeBlog={mockRemoveBlog}
+        loggedInUser={loggedInUser}
       />
     )
 
@@ -41,6 +50,7 @@ describe('<Blog />', () => {
         blog={blog}
         updateBlog={mockUpdateBlog}
         removeBlog={mockRemoveBlog}
+        loggedInUser={loggedInUser}
       />
     )
 
@@ -58,6 +68,7 @@ describe('<Blog />', () => {
         blog={blog}
         updateBlog={mockUpdateBlog}
         removeBlog={mockRemoveBlog}
+        loggedInUser={loggedInUser}
       />
     )
 
