@@ -11,7 +11,10 @@ const Filter = () => {
 
   return (
     <div style={style}>
-      filter <input onChange={(e) => dispatch(filterAnecdote(e.target.value))} />
+      filter
+      <input
+        onChange={(e) => dispatch(filterAnecdote(e.target.value))}
+      />
     </div>
   )
 }
