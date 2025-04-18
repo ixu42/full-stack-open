@@ -14,23 +14,35 @@ const notificationReducer = (state, action) => {
 const NotificationContext = createContext()
 
 export const NotificationContextProvider = (props) => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, '')
+  const [notification, dispatch] = useReducer(notificationReducer, '')
+
+  const notify = (message, duration = 5000) => {
+    dispatch({ type: 'SET', payload: message })
+    setTimeout(() => {
+      dispatch({ type: 'CLEAR' })
+    }, duration)
+  }
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispatch]}>
+    <NotificationContext.Provider value={{ notification, dispatch, notify }}>
       {props.children}
     </NotificationContext.Provider>
   )
 }
 
 export const useNotificationValue = () => {
-  const notificationAndDispatch = useContext(NotificationContext)
-  return notificationAndDispatch[0]
+  const context = useContext(NotificationContext)
+  return context.notification
 }
 
 export const useNotificationDispatch = () => {
-  const notificationAndDispatch = useContext(NotificationContext)
-  return notificationAndDispatch[1]
+  const context = useContext(NotificationContext)
+  return context.dispatch
 }
+
+export const useNotify = () => {
+  const context = useContext(NotificationContext)
+  return context.notify
+} 
 
 export default NotificationContext
