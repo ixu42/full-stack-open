@@ -15,6 +15,12 @@ const AnecdoteForm = () => {
         dispatch({ type: 'CLEAR' })
       }, 5000)
     },
+    onError: (error) => {
+      dispatch({ type: 'SET', payload: error.response.data.error })
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR' })
+      }, 5000)
+    }
   })
 
   const onCreate = (event) => {
