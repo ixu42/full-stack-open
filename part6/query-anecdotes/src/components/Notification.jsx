@@ -1,4 +1,4 @@
-import { useNotificationValue } from '../NotificationContext'
+import { useNotificationValue } from '../useNotification'
 
 const Notification = () => {
   const notification = useNotificationValue()
