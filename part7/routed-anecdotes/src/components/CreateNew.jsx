@@ -2,40 +2,39 @@ import { useNavigate } from 'react-router-dom'
 import  { useField } from '../hooks'
 
 const CreateNew = ({ addNew, setNotification }) => {
-  const content = useField('content')
-  const author = useField('author')
-  const info = useField('info')
+  const [contentProps, resetContent] = useField('content')
+  const [authorProps, resetAuthor] = useField('author')
+  const [infoProps, resetInfo] = useField('info')
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: contentProps.value,
+      author: authorProps.value,
+      info: infoProps.value,
       votes: 0
     })
     navigate('/')
-    setNotification(`a new anecdote ${content.value} created!`)
+    setNotification(`a new anecdote ${contentProps.value} created!`)
     setTimeout(() => {
       setNotification('')
     }, 5000)
   }
 
   const handleReset = () => {
-    console.log("resetting...")
-    content.reset()
-    author.reset()
-    info.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
-        <div>content <input {...content} /></div>
-        <div>author <input {...author} /></div>
-        <div>url for more info <input {...info} /></div>
+        <div>content <input {...contentProps} /></div>
+        <div>author <input {...authorProps} /></div>
+        <div>url for more info <input {...infoProps} /></div>
         <button type='submit'>create</button>
         <button type='reset' onClick={handleReset}>reset</button>
       </form>
