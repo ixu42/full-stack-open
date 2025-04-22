@@ -22,6 +22,13 @@ const CreateNew = ({ addNew, setNotification }) => {
     }, 5000)
   }
 
+  const handleReset = () => {
+    console.log("resetting...")
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -29,7 +36,8 @@ const CreateNew = ({ addNew, setNotification }) => {
         <div>content <input {...content} /></div>
         <div>author <input {...author} /></div>
         <div>url for more info <input {...info} /></div>
-        <button>create</button>
+        <button type='submit'>create</button>
+        <button type='reset' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
