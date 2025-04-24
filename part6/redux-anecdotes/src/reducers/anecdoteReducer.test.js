@@ -11,7 +11,7 @@ describe('anecdoteReducer', () => {
       }
     ]
     const action = {
-      type: 'anecdotes/voteAnecdote',
+      type: 'anecdotes/incrementVote',
       payload: state[0].id
     }
 
@@ -20,23 +20,28 @@ describe('anecdoteReducer', () => {
 
     expect(newState).toHaveLength(1)
     expect(newState).toContainEqual({
-        content: 'the app state is in redux store',
-        id: 1,
-        votes: 1
-      })
+      content: 'the app state is in redux store',
+      id: 1,
+      votes: 1
+    })
   })
 
   test('returns new state with action NEW_ANECDOTE', () => {
     const state = []
+    const newAnecdote = {
+      content: 'the app state is in redux store',
+      id: 1,
+      votes: 0
+    }
     const action = {
-      type: 'anecdotes/createAnecdote',
-      payload: 'the app state is in redux store'
+      type: 'anecdotes/appendAnecdote',
+      payload: newAnecdote
     }
 
     deepFreeze(state)
     const newState = anecdoteReducer(state, action)
 
     expect(newState).toHaveLength(1)
-    expect(newState.map(s => s.content)).toContainEqual(action.payload)
+    expect(newState).toContainEqual(newAnecdote)
   })
 })
