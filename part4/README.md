@@ -8,7 +8,7 @@ Exercises 4.1-4.23 done.
 
 1. Go to the project root (where this README.md is located).
 2. Run `npm install` to install required dependencies.
-3. Create an .env file, and add `PORT`, `MONGODB_URI`, `JWT_SECRET_KEY` key-value pairs.
+3. Create an .env file, and add `PORT`, `MONGODB_URI_DEV`, `MONGODB_URI_TEST`, `MONGODB_URI_PROD`, `JWT_SECRET_KEY` key-value pairs.
 
 ## USAGE
 
