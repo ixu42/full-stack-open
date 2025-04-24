@@ -34,7 +34,7 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
 
   if (!showDetails)
     return (
-      <div className='blog' style={blogStyle}>
+      <div className="blog" style={blogStyle}>
         <div>
           {blog.title} {blog.author}{' '}
           <button onClick={toggleShowDetails}>view</button>
@@ -43,7 +43,7 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
     )
 
   return (
-    <div className='blog' style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <div>
         {blog.title} {blog.author}{' '}
         <button onClick={toggleShowDetails}>hide</button>
@@ -82,7 +82,7 @@ Blog.propTypes = {
   loggedInUser: PropTypes.shape({
     username: PropTypes.string.isRequired,
     name: PropTypes.string,
-    token: PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired
   }).isRequired
 }
 
