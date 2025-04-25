@@ -31,10 +31,10 @@ const Blog = ({ blog, removeBlog, loggedInUser }) => {
       )
     } catch (exception) {
       dispatch(
-        setNotification(
-          { content: exception.response.data.error, isError: true },
-          5
-        )
+        setNotification({
+          content: exception.response.data.error,
+          isError: true
+        })
       )
     }
   }

@@ -39,10 +39,10 @@ const App = () => {
       setUser(user)
     } catch (exception) {
       dispatch(
-        setNotification(
-          { content: 'wrong username or password', isError: true },
-          5
-        )
+        setNotification({
+          content: 'wrong username or password',
+          isError: true
+        })
       )
     }
   }
@@ -58,20 +58,17 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       dispatch(createBlog(newBlog))
       dispatch(
-        setNotification(
-          {
-            content: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-            isError: false
-          },
-          5
-        )
+        setNotification({
+          content: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          isError: false
+        })
       )
     } catch (exception) {
       dispatch(
-        setNotification(
-          { content: exception.response.data.error, isError: true },
-          5
-        )
+        setNotification({
+          content: exception.response.data.error,
+          isError: true
+        })
       )
     }
   }
@@ -84,10 +81,10 @@ const App = () => {
       dispatch(deleteBlog(blogToRemove.id))
     } catch (exception) {
       dispatch(
-        setNotification(
-          { content: exception.response.data.error, isError: true },
-          5
-        )
+        setNotification({
+          content: exception.response.data.error,
+          isError: true
+        })
       )
     }
   }
