@@ -30,7 +30,6 @@ export const { setBlogs, appendBlog, incrementLikes, removeBlog } =
 export const initBlogs = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
-    console.log('blogs returned:', blogs)
     dispatch(setBlogs(blogs))
   }
 }

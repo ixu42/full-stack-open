@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -9,10 +9,11 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
 import { initBlogs, deleteBlog } from './reducers/blogReducer'
+import { setUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs)
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.signedInUser)
 
   const dispatch = useDispatch()
 
@@ -26,8 +27,9 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogin = async (username, password) => {
@@ -35,7 +37,7 @@ const App = () => {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
     } catch (exception) {
       dispatch(
         setNotification({
@@ -49,7 +51,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
-    setUser(null)
+    dispatch(setUser(null))
   }
 
   const removeBlog = (blogToRemove) => {
