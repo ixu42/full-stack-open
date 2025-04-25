@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -6,15 +7,14 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({
-    content: '',
-    isError: false
-  })
   const blogFormRef = useRef()
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -30,13 +30,7 @@ const App = () => {
   }, [])
 
   const informUser = (content, isError) => {
-    setMessage({
-      content: content,
-      isError: isError
-    })
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
+    dispatch(setNotification({ content, isError }, 5))
   }
 
   const informUserError = (exception) => {
@@ -104,7 +98,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={message} />
+        <Notification />
         <LoginForm loginUser={handleLogin} />
       </div>
     )
@@ -113,7 +107,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} />
+      <Notification />
       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
