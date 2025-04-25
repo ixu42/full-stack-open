@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { createBlog } from '../reducers/blogReducer'
 
 const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({

@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { setNotification } from '../reducers/notificationReducer'
+import { likeBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
+const Blog = ({ blog, removeBlog, loggedInUser }) => {
   const [showDetails, setShowDetails] = useState(false)
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -17,12 +21,22 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
   }
 
   const handleLike = () => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-      user: blog.user.id
+    try {
+      dispatch(
+        likeBlog({
+          ...blog,
+          likes: blog.likes + 1,
+          user: blog.user.id
+        })
+      )
+    } catch (exception) {
+      dispatch(
+        setNotification(
+          { content: exception.response.data.error, isError: true },
+          5
+        )
+      )
     }
-    updateBlog(updatedBlog)
   }
 
   const handleRemove = () => {
@@ -77,7 +91,6 @@ Blog.propTypes = {
       })
     ])
   }).isRequired,
-  updateBlog: PropTypes.func.isRequired,
   removeBlog: PropTypes.func.isRequired,
   loggedInUser: PropTypes.shape({
     username: PropTypes.string.isRequired,

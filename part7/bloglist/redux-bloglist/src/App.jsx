@@ -8,12 +8,7 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
-import {
-  initBlogs,
-  createBlog,
-  likeBlog,
-  deleteBlog
-} from './reducers/blogReducer'
+import { initBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs)
@@ -36,17 +31,6 @@ const App = () => {
     }
   }, [])
 
-  const informUser = (content, isError) => {
-    dispatch(setNotification({ content, isError }, 5))
-  }
-
-  const informUserError = (exception) => {
-    const errorMessage = exception.response
-      ? exception.response.data.error
-      : exception.message
-    informUser(errorMessage, true)
-  }
-
   const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({ username, password })
@@ -54,7 +38,12 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      informUser('wrong username or password', true)
+      dispatch(
+        setNotification(
+          { content: 'wrong username or password', isError: true },
+          5
+        )
+      )
     }
   }
 
@@ -68,20 +57,22 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       dispatch(createBlog(newBlog))
-      informUser(
-        `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        false
+      dispatch(
+        setNotification(
+          {
+            content: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+            isError: false
+          },
+          5
+        )
       )
     } catch (exception) {
-      informUserError(exception)
-    }
-  }
-
-  const updateBlog = (updatedBlog) => {
-    try {
-      dispatch(likeBlog(updatedBlog))
-    } catch (exception) {
-      informUserError(exception)
+      dispatch(
+        setNotification(
+          { content: exception.response.data.error, isError: true },
+          5
+        )
+      )
     }
   }
 
@@ -92,7 +83,12 @@ const App = () => {
       }
       dispatch(deleteBlog(blogToRemove.id))
     } catch (exception) {
-      informUserError(exception)
+      dispatch(
+        setNotification(
+          { content: exception.response.data.error, isError: true },
+          5
+        )
+      )
     }
   }
 
@@ -123,7 +119,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlog={updateBlog}
             removeBlog={removeBlog}
             loggedInUser={user}
           />
