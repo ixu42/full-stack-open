@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -8,12 +8,11 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
-import { initBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
+import { initBlogs, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs)
   const [user, setUser] = useState(null)
-  const blogFormRef = useRef()
 
   const dispatch = useDispatch()
 
@@ -53,26 +52,6 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility()
-      dispatch(createBlog(newBlog))
-      dispatch(
-        setNotification({
-          content: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-          isError: false
-        })
-      )
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          content: exception.response.data.error,
-          isError: true
-        })
-      )
-    }
-  }
-
   const removeBlog = (blogToRemove) => {
     try {
       if (blogToRemove.user.username !== user.username) {
@@ -107,8 +86,8 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
+      <Togglable buttonLabel="new blog">
+        <BlogForm />
       </Togglable>
       {[...blogs]
         .sort((a, b) => b.likes - a.likes)

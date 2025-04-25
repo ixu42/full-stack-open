@@ -1,22 +1,42 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ toggleVisibility }) => {
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
     url: ''
   })
 
+  const dispatch = useDispatch()
+
   const addBlog = (event) => {
     event.preventDefault()
-    createBlog(newBlog)
+    try {
+      dispatch(createBlog(newBlog))
+      dispatch(
+        setNotification({
+          content: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          isError: false
+        })
+      )
+    } catch (exception) {
+      dispatch(
+        setNotification({
+          content: exception.response.data.error,
+          isError: true
+        })
+      )
+    }
     setNewBlog({
       title: '',
       author: '',
       url: ''
     })
+    toggleVisibility()
   }
 
   const handleBlogChange = (event) => {
@@ -68,7 +88,7 @@ const BlogForm = ({ createBlog }) => {
 }
 
 BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
+  toggleVisibility: PropTypes.func
 }
 
 export default BlogForm
