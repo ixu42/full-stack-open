@@ -26,15 +26,15 @@ const create = async (newObject) => {
   }
 }
 
-const update = async (updateContent, blogId) => {
-  const url = `${baseUrl}/${blogId}`
+const update = async (updatedBlog) => {
+  const url = `${baseUrl}/${updatedBlog.id}`
 
   const config = {
     headers: { Authorization: token }
   }
 
   try {
-    const response = await axios.put(url, updateContent, config)
+    const response = await axios.put(url, updatedBlog, config)
     return response.data
   } catch (error) {
     console.error('error during blog update:', error)

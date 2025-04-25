@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -8,16 +8,23 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
+import {
+  initBlogs,
+  createBlog,
+  likeBlog,
+  deleteBlog
+} from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    dispatch(initBlogs())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -57,38 +64,33 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (newBlog) => {
+  const addBlog = (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      const addedBlog = await blogService.create(newBlog)
+      dispatch(createBlog(newBlog))
       informUser(
         `a new blog ${newBlog.title} by ${newBlog.author} added`,
         false
       )
-      setBlogs(blogs.concat(addedBlog))
     } catch (exception) {
       informUserError(exception)
     }
   }
 
-  const updateBlog = async (updatedBlog) => {
+  const updateBlog = (updatedBlog) => {
     try {
-      const returnedBlog = await blogService.update(updatedBlog, updatedBlog.id)
-      setBlogs(
-        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
-      )
+      dispatch(likeBlog(updatedBlog))
     } catch (exception) {
       informUserError(exception)
     }
   }
 
-  const removeBlog = async (blogToRemove) => {
+  const removeBlog = (blogToRemove) => {
     try {
       if (blogToRemove.user.username !== user.username) {
         throw new Error('You do not have permission to remove this blog.')
       }
-      await blogService.remove(blogToRemove.id)
-      setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id))
+      dispatch(deleteBlog(blogToRemove.id))
     } catch (exception) {
       informUserError(exception)
     }
@@ -115,7 +117,7 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs
+      {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
           <Blog
