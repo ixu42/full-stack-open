@@ -6,9 +6,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
-import loginService from './services/login'
-import { setNotification } from './reducers/notificationReducer'
-import { initBlogs, deleteBlog } from './reducers/blogReducer'
+import { initBlogs } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 
 const App = () => {
@@ -32,42 +30,10 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleLogin = async (username, password) => {
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      dispatch(setUser(user))
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          content: 'wrong username or password',
-          isError: true
-        })
-      )
-    }
-  }
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
     dispatch(setUser(null))
-  }
-
-  const removeBlog = (blogToRemove) => {
-    try {
-      if (blogToRemove.user.username !== user.username) {
-        throw new Error('You do not have permission to remove this blog.')
-      }
-      dispatch(deleteBlog(blogToRemove.id))
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          content: exception.response.data.error,
-          isError: true
-        })
-      )
-    }
   }
 
   if (user === null) {
@@ -75,7 +41,7 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
         <Notification />
-        <LoginForm loginUser={handleLogin} />
+        <LoginForm />
       </div>
     )
   }
@@ -94,12 +60,7 @@ const App = () => {
       {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            removeBlog={removeBlog}
-            loggedInUser={user}
-          />
+          <Blog key={blog.id} blog={blog} />
         ))}
     </div>
   )

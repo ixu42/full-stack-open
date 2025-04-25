@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { likeBlog } from '../reducers/blogReducer'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, removeBlog, loggedInUser }) => {
+const Blog = ({ blog }) => {
   const [showDetails, setShowDetails] = useState(false)
+  const signedInUser = useSelector((state) => state.signedInUser)
   const dispatch = useDispatch()
 
   const blogStyle = {
@@ -43,7 +44,18 @@ const Blog = ({ blog, removeBlog, loggedInUser }) => {
     const toDelete = window.confirm(
       `Remove blog ${blog.title} by ${blog.author}`
     )
-    if (toDelete) removeBlog(blog)
+    if (toDelete) {
+      try {
+        dispatch(deleteBlog(blog.id))
+      } catch (exception) {
+        dispatch(
+          setNotification({
+            content: exception.response.data.error,
+            isError: true
+          })
+        )
+      }
+    }
   }
 
   if (!showDetails)
@@ -67,7 +79,7 @@ const Blog = ({ blog, removeBlog, loggedInUser }) => {
         likes {blog.likes} <button onClick={handleLike}>like</button>
       </div>
       <div>{blog.user.name}</div>
-      {loggedInUser.username === blog.user.username && (
+      {signedInUser.username === blog.user.username && (
         <button style={{ backgroundColor: 'lightblue' }} onClick={handleRemove}>
           remove
         </button>
@@ -90,12 +102,6 @@ Blog.propTypes = {
         username: PropTypes.string.isRequired
       })
     ])
-  }).isRequired,
-  removeBlog: PropTypes.func.isRequired,
-  loggedInUser: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    name: PropTypes.string,
-    token: PropTypes.string.isRequired
   }).isRequired
 }
 
