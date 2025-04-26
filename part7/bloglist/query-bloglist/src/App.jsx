@@ -6,15 +6,14 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useSetMessage, useSetError } from './useNotification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({
-    content: '',
-    isError: false
-  })
   const blogFormRef = useRef()
+  const setMessage = useSetMessage()
+  const setError = useSetError()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -29,23 +28,6 @@ const App = () => {
     }
   }, [])
 
-  const informUser = (content, isError) => {
-    setMessage({
-      content: content,
-      isError: isError
-    })
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
-  }
-
-  const informUserError = (exception) => {
-    const errorMessage = exception.response
-      ? exception.response.data.error
-      : exception.message
-    informUser(errorMessage, true)
-  }
-
   const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({ username, password })
@@ -53,7 +35,7 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      informUser('wrong username or password', true)
+      setError('wrong username or password')
     }
   }
 
@@ -67,13 +49,10 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       const addedBlog = await blogService.create(newBlog)
-      informUser(
-        `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        false
-      )
+      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       setBlogs(blogs.concat(addedBlog))
     } catch (exception) {
-      informUserError(exception)
+      setError(exception.response.data.error)
     }
   }
 
@@ -84,7 +63,7 @@ const App = () => {
         blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
       )
     } catch (exception) {
-      informUserError(exception)
+      setError(exception.response.data.error)
     }
   }
 
@@ -96,7 +75,7 @@ const App = () => {
       await blogService.remove(blogToRemove.id)
       setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id))
     } catch (exception) {
-      informUserError(exception)
+      setError(exception.response.data.error)
     }
   }
 
@@ -104,7 +83,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={message} />
+        <Notification />
         <LoginForm loginUser={handleLogin} />
       </div>
     )
@@ -113,7 +92,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} />
+      <Notification />
       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>

@@ -1,20 +1,15 @@
-import PropTypes from 'prop-types'
+import { useNotificationValue } from '../useNotification'
 
-const Notification = ({ message }) => {
-  if (!message || !message.content) return null
+const Notification = () => {
+  const notification = useNotificationValue()
+
+  if (!notification || !notification.content) return null
 
   return (
-    <div className={message.isError ? 'error' : 'success'}>
-      {message.content}
+    <div className={notification.isError ? 'error' : 'success'}>
+      {notification.content}
     </div>
   )
-}
-
-Notification.propTypes = {
-  message: PropTypes.shape({
-    content: PropTypes.string.isRequired,
-    isError: PropTypes.bool.isRequired
-  })
 }
 
 export default Notification
