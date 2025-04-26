@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSetMessage, useSetError } from '../useNotification'
+import { useSetMessage, useSetError } from '../contexts/NotificationContext'
 
 const Blog = ({ blog, loggedInUser }) => {
   const [showDetails, setShowDetails] = useState(false)
