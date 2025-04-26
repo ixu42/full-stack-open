@@ -1,23 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useSetMessage, useSetError } from './useNotification'
+import { useSetError } from './useNotification'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
-  const setMessage = useSetMessage()
   const setError = useSetError()
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -45,40 +39,6 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility()
-      const addedBlog = await blogService.create(newBlog)
-      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-      setBlogs(blogs.concat(addedBlog))
-    } catch (exception) {
-      setError(exception.response.data.error)
-    }
-  }
-
-  const updateBlog = async (updatedBlog) => {
-    try {
-      const returnedBlog = await blogService.update(updatedBlog, updatedBlog.id)
-      setBlogs(
-        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
-      )
-    } catch (exception) {
-      setError(exception.response.data.error)
-    }
-  }
-
-  const removeBlog = async (blogToRemove) => {
-    try {
-      if (blogToRemove.user.username !== user.username) {
-        throw new Error('You do not have permission to remove this blog.')
-      }
-      await blogService.remove(blogToRemove.id)
-      setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id))
-    } catch (exception) {
-      setError(exception.response.data.error)
-    }
-  }
-
   if (user === null) {
     return (
       <div>
@@ -98,19 +58,9 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </div>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
+        <BlogForm />
       </Togglable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateBlog={updateBlog}
-            removeBlog={removeBlog}
-            loggedInUser={user}
-          />
-        ))}
+      <BlogList user={user} />
     </div>
   )
 }

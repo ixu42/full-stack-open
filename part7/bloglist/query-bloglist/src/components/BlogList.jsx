@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import blogService from '../services/blogs'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSetMessage, useSetError } from '../useNotification'
 
-const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
+const Blog = ({ blog, loggedInUser }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const blogStyle = {
@@ -16,20 +19,45 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
     setShowDetails(!showDetails)
   }
 
+  const queryClient = useQueryClient()
+  const setMessage = useSetMessage()
+  const setError = useSetError()
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (blog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      setMessage(`you liked '${blog.title}'`)
+    },
+    onError: (error) => {
+      setError(error.response.data.error)
+    }
+  })
+
+  const removeBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: (blog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      setMessage(`you removed '${blog.title}'`)
+    },
+    onError: (error) => {
+      setError(error.response.data.error)
+    }
+  })
+
   const handleLike = () => {
-    const updatedBlog = {
+    updateBlogMutation.mutate({
       ...blog,
       likes: blog.likes + 1,
       user: blog.user.id
-    }
-    updateBlog(updatedBlog)
+    })
   }
 
   const handleRemove = () => {
     const toDelete = window.confirm(
       `Remove blog ${blog.title} by ${blog.author}`
     )
-    if (toDelete) removeBlog(blog)
+    if (toDelete) removeBlogMutation.mutate(blog.id)
   }
 
   if (!showDetails)
@@ -62,6 +90,33 @@ const Blog = ({ blog, updateBlog, removeBlog, loggedInUser }) => {
   )
 }
 
+const BlogList = ({ user }) => {
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false
+  })
+  console.log(JSON.parse(JSON.stringify(result)))
+
+  if (result.isLoading) return <div>loading data...</div>
+
+  if (result.isError) {
+    return <div>blogs service not available due to problems in server</div>
+  }
+
+  const blogs = result.data
+
+  return (
+    <div>
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog key={blog.id} blog={blog} loggedInUser={user} />
+        ))}
+    </div>
+  )
+}
+
 Blog.propTypes = {
   blog: PropTypes.shape({
     title: PropTypes.string.isRequired,
@@ -77,8 +132,6 @@ Blog.propTypes = {
       })
     ])
   }).isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
   loggedInUser: PropTypes.shape({
     username: PropTypes.string.isRequired,
     name: PropTypes.string,
@@ -86,4 +139,4 @@ Blog.propTypes = {
   }).isRequired
 }
 
-export default Blog
+export default BlogList
