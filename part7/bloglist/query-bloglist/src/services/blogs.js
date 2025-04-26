@@ -17,13 +17,8 @@ const create = async (newObject) => {
     headers: { Authorization: token }
   }
 
-  try {
-    const response = await axios.post(baseUrl, newObject, config)
-    return response.data
-  } catch (error) {
-    console.error('error during blog creation:', error)
-    throw error
-  }
+  const response = await axios.post(baseUrl, newObject, config)
+  return response.data
 }
 
 const update = async (blog) => {
@@ -33,13 +28,8 @@ const update = async (blog) => {
     headers: { Authorization: token }
   }
 
-  try {
-    const response = await axios.put(url, blog, config)
-    return response.data
-  } catch (error) {
-    console.error('error during blog update:', error)
-    throw error
-  }
+  const response = await axios.put(url, blog, config)
+  return response.data
 }
 
 const remove = async (blogId) => {
@@ -49,12 +39,7 @@ const remove = async (blogId) => {
     headers: { Authorization: token }
   }
 
-  try {
-    await axios.delete(url, config)
-  } catch (error) {
-    console.error('error during blog deletion:', error)
-    throw error
-  }
+  await axios.delete(url, config)
 }
 
 export default { getAll, create, update, remove, setToken }
