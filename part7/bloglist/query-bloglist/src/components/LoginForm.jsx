@@ -1,13 +1,27 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
+import loginService from '../services/login'
+import blogService from '../services/blogs'
+import { useSetError } from '../hooks/useNotification'
+import { useUserDispatch } from '../hooks/useUser'
 
-const LoginForm = ({ loginUser }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const setError = useSetError()
+  const dispatch = useUserDispatch()
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
-    loginUser(username, password)
+
+    try {
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      dispatch({ type: 'LOGIN', payload: user })
+    } catch (exception) {
+      setError('wrong username or password')
+    }
+
     setUsername('')
     setPassword('')
   }
@@ -37,10 +51,6 @@ const LoginForm = ({ loginUser }) => {
       <button type="submit">login</button>
     </form>
   )
-}
-
-LoginForm.propTypes = {
-  loginUser: PropTypes.func.isRequired
 }
 
 export default LoginForm
