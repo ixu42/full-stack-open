@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
-import { setNotification } from '../reducers/notificationReducer'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog }) => {
@@ -22,22 +21,13 @@ const Blog = ({ blog }) => {
   }
 
   const handleLike = () => {
-    try {
-      dispatch(
-        likeBlog({
-          ...blog,
-          likes: blog.likes + 1,
-          user: blog.user.id
-        })
-      )
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          content: exception.response.data.error,
-          isError: true
-        })
-      )
-    }
+    dispatch(
+      likeBlog({
+        ...blog,
+        likes: blog.likes + 1,
+        user: blog.user.id
+      })
+    )
   }
 
   const handleRemove = () => {
@@ -45,16 +35,7 @@ const Blog = ({ blog }) => {
       `Remove blog ${blog.title} by ${blog.author}`
     )
     if (toDelete) {
-      try {
-        dispatch(deleteBlog(blog.id))
-      } catch (exception) {
-        dispatch(
-          setNotification({
-            content: exception.response.data.error,
-            isError: true
-          })
-        )
-      }
+      dispatch(deleteBlog(blog.id))
     }
   }
 
@@ -90,6 +71,7 @@ const Blog = ({ blog }) => {
 
 Blog.propTypes = {
   blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     author: PropTypes.string,
     url: PropTypes.string.isRequired,
