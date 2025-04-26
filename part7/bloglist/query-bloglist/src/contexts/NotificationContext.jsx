@@ -1,4 +1,5 @@
-import { createContext, useReducer, useContext } from 'react'
+import { createContext, useReducer } from 'react'
+import PropTypes from 'prop-types'
 
 const notificationReducer = (state, action) => {
   switch (action.type) {
@@ -39,25 +40,8 @@ export const NotificationContextProvider = (props) => {
   )
 }
 
-// custom hooks
-export const useNotificationValue = () => {
-  const context = useContext(NotificationContext)
-  return context.notification
-}
-
-export const useNotificationDispatch = () => {
-  const context = useContext(NotificationContext)
-  return context.dispatch
-}
-
-export const useSetMessage = () => {
-  const context = useContext(NotificationContext)
-  return context.setMessage
-}
-
-export const useSetError = () => {
-  const context = useContext(NotificationContext)
-  return context.setError
+NotificationContextProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }
 
 export default NotificationContext

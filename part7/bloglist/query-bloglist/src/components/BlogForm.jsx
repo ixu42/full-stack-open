@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSetMessage, useSetError } from '../contexts/NotificationContext'
+import { useSetMessage, useSetError } from '../hooks/useNotification'
 
 const BlogForm = ({ toggleVisibility }) => {
   const [newBlog, setNewBlog] = useState({

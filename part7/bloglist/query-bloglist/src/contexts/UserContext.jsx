@@ -1,4 +1,5 @@
-import { createContext, useReducer, useContext } from 'react'
+import { createContext, useReducer } from 'react'
+import PropTypes from 'prop-types'
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -23,15 +24,8 @@ export const UserContextProvider = (props) => {
   )
 }
 
-// custom hooks
-export const useUserValue = () => {
-  const context = useContext(UserContext)
-  return context.user
-}
-
-export const useUserDispatch = () => {
-  const context = useContext(UserContext)
-  return context.dispatch
+UserContextProvider.propTypes = {
+  children: PropTypes.node.isRequired
 }
 
 export default UserContext

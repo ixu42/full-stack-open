@@ -1,4 +1,4 @@
-import { useNotificationValue } from '../contexts/NotificationContext'
+import { useNotificationValue } from '../hooks/useNotification'
 
 const Notification = () => {
   const notification = useNotificationValue()

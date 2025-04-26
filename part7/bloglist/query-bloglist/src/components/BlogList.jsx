@@ -2,10 +2,12 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSetMessage, useSetError } from '../contexts/NotificationContext'
+import { useSetMessage, useSetError } from '../hooks/useNotification'
+import { useUserValue } from '../hooks/useUser'
 
-const Blog = ({ blog, loggedInUser }) => {
+const Blog = ({ blog }) => {
   const [showDetails, setShowDetails] = useState(false)
+  const signedInUser = useUserValue()
 
   const blogStyle = {
     paddingTop: 10,
@@ -81,7 +83,7 @@ const Blog = ({ blog, loggedInUser }) => {
         likes {blog.likes} <button onClick={handleLike}>like</button>
       </div>
       <div>{blog.user.name}</div>
-      {loggedInUser.username === blog.user.username && (
+      {signedInUser.username === blog.user.username && (
         <button style={{ backgroundColor: 'lightblue' }} onClick={handleRemove}>
           remove
         </button>
@@ -90,7 +92,7 @@ const Blog = ({ blog, loggedInUser }) => {
   )
 }
 
-const BlogList = ({ user }) => {
+const BlogList = () => {
   const result = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll,
@@ -111,7 +113,7 @@ const BlogList = ({ user }) => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} loggedInUser={user} />
+          <Blog key={blog.id} blog={blog} />
         ))}
     </div>
   )
@@ -119,6 +121,7 @@ const BlogList = ({ user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     author: PropTypes.string,
     url: PropTypes.string.isRequired,
@@ -131,11 +134,6 @@ Blog.propTypes = {
         username: PropTypes.string.isRequired
       })
     ])
-  }).isRequired,
-  loggedInUser: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    name: PropTypes.string,
-    token: PropTypes.string.isRequired
   }).isRequired
 }
 

@@ -6,8 +6,8 @@ import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useSetError } from './contexts/NotificationContext'
-import { useUserValue, useUserDispatch } from './contexts/UserContext'
+import { useSetError } from './hooks/useNotification'
+import { useUserValue, useUserDispatch } from './hooks/useUser'
 
 const App = () => {
   const blogFormRef = useRef()
@@ -63,7 +63,7 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm />
       </Togglable>
-      <BlogList user={user} />
+      <BlogList />
     </div>
   )
 }
