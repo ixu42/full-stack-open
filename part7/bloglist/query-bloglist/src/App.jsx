@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
+import Users from './pages/Users'
 import blogService from './services/blogs'
 import { useUserValue, useUserDispatch } from './hooks/useUser'
 
@@ -38,18 +40,35 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-        <p>{user.name} logged in</p>
-        <button onClick={handleLogout}>logout</button>
+    <Router>
+      {/* Navigation Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <Link to="/">blogs</Link>
+        <Link to="/users">users</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>logout</button>
+        </div>
       </div>
-      <Togglable buttonLabel="new blog">
-        <BlogForm />
-      </Togglable>
-      <BlogList />
-    </div>
+
+      <Notification />
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              <h2>blogs</h2>
+              <Togglable buttonLabel="new blog">
+                <BlogForm />
+              </Togglable>
+              <BlogList />
+            </div>
+          }
+        />
+        <Route path="/users" element={<Users />} />
+      </Routes>
+    </Router>
   )
 }
 
