@@ -8,7 +8,7 @@ const User = () => {
   const result = useQuery({
     queryKey: ['user', id],
     queryFn: ({ queryKey }) => {
-      const [_key, id] = queryKey
+      const id = queryKey[1]
       return userService.getById(id)
     }
   })

@@ -60,7 +60,7 @@ const Blog = () => {
   const result = useQuery({
     queryKey: ['blog', id],
     queryFn: ({ queryKey }) => {
-      const [_key, id] = queryKey
+      const id = queryKey[1]
       return blogService.getById(id)
     }
   })
