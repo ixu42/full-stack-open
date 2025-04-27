@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSetMessage, useSetError } from '../hooks/useNotification'
 import { useUserValue } from '../hooks/useUser'
 import blogService from '../services/blogs'
+import CommentList from './CommentList'
 
 const Blog = () => {
   const queryClient = useQueryClient()
@@ -75,6 +76,7 @@ const Blog = () => {
 
   return (
     <div>
+      <h2>blog app</h2>
       <h2>
         {blog.title} {blog.author}{' '}
       </h2>
@@ -88,6 +90,7 @@ const Blog = () => {
           remove
         </button>
       )}
+      <CommentList blog={blog} />
     </div>
   )
 }
