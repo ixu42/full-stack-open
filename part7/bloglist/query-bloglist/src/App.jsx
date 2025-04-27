@@ -5,8 +5,9 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
-import Users from './pages/Users'
-import User from './pages/User'
+import Blog from './components/Blog'
+import Users from './components/Users'
+import User from './components/User'
 import blogService from './services/blogs'
 import { useUserValue, useUserDispatch } from './hooks/useUser'
 
@@ -55,6 +56,7 @@ const App = () => {
       <Notification />
 
       <Routes>
+        <Route path="blogs/:id" element={<Blog />} />
         <Route path="users/:id" element={<User />} />
         <Route path="/users" element={<Users />} />
         <Route

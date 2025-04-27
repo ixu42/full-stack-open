@@ -12,7 +12,7 @@ const Users = () => {
   if (result.isLoading) return <div>loading data...</div>
 
   if (result.isError) {
-    return <div>users service not available due to problems in server</div>
+    return <div>user service not available due to problems in server</div>
   }
 
   const users = result.data
