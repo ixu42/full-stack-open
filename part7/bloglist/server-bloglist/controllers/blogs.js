@@ -63,7 +63,7 @@ blogsRouter.delete(
 )
 
 blogsRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes, user } = request.body
+  const { title, author, url, likes, user, comments } = request.body
 
   const blog = await Blog.findById(request.params.id)
 
@@ -71,11 +71,26 @@ blogsRouter.put('/:id', async (request, response) => {
     return response.status(404).json({ error: 'Blog not found' })
   }
 
-  blog.title = title
-  blog.author = author
-  blog.url = url
-  blog.likes = likes
-  blog.user = user
+  Object.assign(blog, { title, author, url, likes, user, comments })
+
+  const updatedBlog = await blog.save()
+  const returnedBlog = await Blog.findById(updatedBlog._id).populate('user', {
+    username: 1,
+    name: 1
+  })
+  return response.json(returnedBlog)
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const comment = request.body
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(404).json({ error: 'Blog not found' })
+  }
+
+  blog.comments.push(comment)
 
   const updatedBlog = await blog.save()
   const returnedBlog = await Blog.findById(updatedBlog._id).populate('user', {

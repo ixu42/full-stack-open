@@ -8,7 +8,8 @@ const blogSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  comments: [{ text: { type: String, required: true } }]
 })
 
 blogSchema.set('toJSON', {
@@ -16,6 +17,15 @@ blogSchema.set('toJSON', {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
+
+    if (returnedObject.comments) {
+      returnedObject.comments = returnedObject.comments.map((comment) => {
+        return {
+          id: comment._id.toString(),
+          text: comment.text
+        }
+      })
+    }
   }
 })
 
