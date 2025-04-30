@@ -16,9 +16,8 @@ const Blog = () => {
 
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
-    onSuccess: (blog) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blog'] })
-      setMessage(`you liked '${blog.title}'`)
     },
     onError: (error) => {
       setError(error.response.data.error)
