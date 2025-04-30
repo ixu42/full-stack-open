@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
+import Button from '@mui/material/Button'
+import AddCommentIcon from '@mui/icons-material/AddComment'
 import blogService from '../services/blogs'
 import { useSetError } from '../hooks/useNotification'
 
@@ -29,7 +31,14 @@ const CommentForm = ({ blogId }) => {
   return (
     <form onSubmit={addComment}>
       <input value={comment} onChange={(e) => setComment(e.target.value)} />
-      <button type="submit">add comment</button>
+      <Button
+        type="submit"
+        variant="text"
+        size="small"
+        endIcon={<AddCommentIcon />}
+      >
+        add comment
+      </Button>
     </form>
   )
 }

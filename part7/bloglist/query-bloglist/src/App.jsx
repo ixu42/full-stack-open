@@ -1,5 +1,13 @@
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import {
+  Container,
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Typography
+} from '@mui/material'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
@@ -32,47 +40,56 @@ const App = () => {
   }
 
   if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification />
-        <LoginForm />
-      </div>
-    )
+    return <LoginForm />
   }
 
   return (
-    <Router>
-      {/* Navigation Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Link to="/">blogs</Link>
-        <Link to="/users">users</Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
-        </div>
-      </div>
+    <Container>
+      <Router>
+        {/* Navigation Bar */}
+        <AppBar position="static">
+          <Toolbar>
+            <Button color="inherit" component={Link} to="/">
+              blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/users">
+              users
+            </Button>
+            <Box sx={{ flexGrow: 1 }} /> {/* pushes logout to the right */}
+            <Box display="flex" alignItems="center" gap={2}>
+              <Typography variant="body1">{user.name} logged in</Typography>
+              <Button color="inherit" onClick={handleLogout}>
+                logout
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-      <Notification />
+        <Notification />
 
-      <Routes>
-        <Route path="blogs/:id" element={<Blog />} />
-        <Route path="users/:id" element={<User />} />
-        <Route path="/users" element={<Users />} />
-        <Route
-          path="/"
-          element={
-            <div>
-              <h2>blogs</h2>
-              <Togglable buttonLabel="new blog">
-                <BlogForm />
-              </Togglable>
-              <BlogList />
-            </div>
-          }
-        />
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="blogs/:id" element={<Blog />} />
+          <Route path="users/:id" element={<User />} />
+          <Route path="/users" element={<Users />} />
+          <Route
+            path="/"
+            element={
+              <Box sx={{ ml: 2 }}>
+                <Typography variant="h4" sx={{ mt: 2, mb: 2 }}>
+                  Blogs
+                </Typography>
+                <Box sx={{ mb: 2 }}>
+                  <Togglable buttonLabel="new blog">
+                    <BlogForm />
+                  </Togglable>
+                </Box>
+                <BlogList />
+              </Box>
+            }
+          />
+        </Routes>
+      </Router>
+    </Container>
   )
 }
 

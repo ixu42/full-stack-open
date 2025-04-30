@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { TextField, Button } from '@mui/material'
 import blogService from '../services/blogs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSetMessage, useSetError } from '../hooks/useNotification'
@@ -47,39 +48,35 @@ const BlogForm = ({ toggleVisibility }) => {
 
   return (
     <div>
-      <h2>create new</h2>
+      <h2>create a new blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          <label htmlFor="title">title</label>
-          <input
-            data-testid="title"
-            id="title"
+          <TextField
+            label="title"
             name="title"
             value={newBlog.title}
             onChange={handleBlogChange}
           />
         </div>
         <div>
-          <label htmlFor="author">author</label>
-          <input
-            data-testid="author"
-            id="author"
+          <TextField
+            label="author"
             name="author"
             value={newBlog.author}
             onChange={handleBlogChange}
           />
         </div>
         <div>
-          <label htmlFor="url">url</label>
-          <input
-            data-testid="url"
-            id="url"
+          <TextField
+            label="url"
             name="url"
             value={newBlog.url}
             onChange={handleBlogChange}
           />
         </div>
-        <button type="submit">create</button>
+        <Button type="submit" variant="outlined" color="primary" size="small">
+          create
+        </Button>
       </form>
     </div>
   )

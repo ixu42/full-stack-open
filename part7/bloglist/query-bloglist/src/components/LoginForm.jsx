@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { TextField, Button } from '@mui/material'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useSetError } from '../hooks/useNotification'
 import { useUserDispatch } from '../hooks/useUser'
+import Notification from './Notification'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -27,29 +29,35 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          data-testid="username"
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          data-testid="password"
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <div>
+      <h2>Log in to application</h2>
+      <Notification />
+      <form onSubmit={handleLogin}>
+        <div>
+          <TextField
+            label="username"
+            type="text"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+            margin="normal"
+          />
+        </div>
+        <div>
+          <TextField
+            label="password"
+            type="password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+            margin="normal"
+          />
+        </div>
+        <div>
+          <Button type="submit" variant="contained" color="primary">
+            login
+          </Button>
+        </div>
+      </form>
+    </div>
   )
 }
 

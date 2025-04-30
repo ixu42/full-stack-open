@@ -1,5 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Box, Button } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { useSetMessage, useSetError } from '../hooks/useNotification'
 import { useUserValue } from '../hooks/useUser'
 import blogService from '../services/blogs'
@@ -75,23 +77,30 @@ const Blog = () => {
   const blog = result.data
 
   return (
-    <div>
-      <h2>blog app</h2>
+    <Box sx={{ m: 2 }}>
       <h2>
         {blog.title} {blog.author}{' '}
       </h2>
       <a href={blog.url}>{blog.url}</a>
       <div>
-        {blog.likes} likes <button onClick={handleLike}>like</button>
+        {blog.likes} likes{' '}
+        <Button variant="text" size="small" onClick={handleLike}>
+          like
+        </Button>
       </div>
       <div>added by {blog.user.name}</div>
       {signedInUser.username === blog.user.username && (
-        <button style={{ backgroundColor: 'lightblue' }} onClick={handleRemove}>
+        <Button
+          variant="text"
+          size="small"
+          startIcon={<DeleteIcon />}
+          onClick={handleRemove}
+        >
           remove
-        </button>
+        </Button>
       )}
       <CommentList blog={blog} />
-    </div>
+    </Box>
   )
 }
 

@@ -1,5 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper
+} from '@mui/material'
 import blogService from '../services/blogs'
 
 const BlogList = () => {
@@ -18,26 +27,25 @@ const BlogList = () => {
 
   const blogs = result.data
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   return (
-    <div>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <div key={blog.id} style={blogStyle}>
-            <Link to={`/blogs/${blog.id}`}>
-              {blog.title} {blog.author}
-            </Link>
-          </div>
-        ))}
-    </div>
+    <Box>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <TableRow key={blog.id}>
+                  <TableCell>
+                    <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                  </TableCell>
+                  <TableCell>{blog.author}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   )
 }
 

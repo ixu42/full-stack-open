@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { Box } from '@mui/material'
 import userService from '../services/users'
 
 const User = () => {
@@ -22,7 +23,7 @@ const User = () => {
   const user = result.data
 
   return (
-    <div>
+    <Box sx={{ m: 2 }}>
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
       <ul>
@@ -30,7 +31,7 @@ const User = () => {
           <li key={blog.id}>{blog.title}</li>
         ))}
       </ul>
-    </div>
+    </Box>
   )
 }
 
