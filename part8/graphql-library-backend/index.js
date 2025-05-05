@@ -122,17 +122,11 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: (root, args) => {
-      if (!args.author && !args.genre) return books
-      if (args.author && !args.genre) {
-        return books.filter((book) => book.author === args.author)
-      }
-      if (!args.author && args.genre) {
-        return books.filter((book) => book.genres.includes(args.genre))
-      }
-      return books.filter(
-        (book) =>
-          book.author === args.author && book.genres.includes(args.genre)
-      )
+      return books.filter((book) => {
+        const matchesAuthor = !args.author || book.author === args.author
+        const matchesGenre = !args.genre || book.genres.includes(args.genre)
+        return matchesAuthor && matchesGenre
+      })
     },
     allAuthors: () => authors
   },
