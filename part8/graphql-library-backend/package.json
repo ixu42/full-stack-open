@@ -1,0 +1,15 @@
+{
+  "name": "graphql-library-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@apollo/server": "^4.12.0",
+    "graphql": "^16.11.0"
+  }
+}
