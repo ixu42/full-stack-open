@@ -35,7 +35,7 @@ const Authors = ({ show, setError }) => {
           ))}
         </tbody>
       </table>
-      <AuthorUpdateForm setError={setError} />
+      <AuthorUpdateForm setError={setError} authors={authors} />
     </div>
   )
 }

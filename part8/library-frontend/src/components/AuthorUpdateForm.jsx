@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useMutation } from '@apollo/client'
+import Select from 'react-select'
 import PropTypes from 'prop-types'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
-const AuthorUpdateForm = ({ setError }) => {
-  const [name, setName] = useState('')
+const AuthorUpdateForm = ({ setError, authors }) => {
   const [birthYear, setBirthYear] = useState('')
+  const [selectedAuthor, setSelectedAuthor] = useState(null)
 
-  const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
       const message = error.graphQLErrors.map((e) => e.message).join('\n')
@@ -15,28 +16,20 @@ const AuthorUpdateForm = ({ setError }) => {
     }
   })
 
-  useEffect(() => {
-    if (result.data && result.data.editAuthor === null) {
-      setError('Author not found')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result.data])
-
   const submit = async (event) => {
     event.preventDefault()
 
-    const cleanedName = name.trim()
-    let cleanedYear = birthYear.trim()
-
-    if (!cleanedName || !cleanedYear) {
-      setError("Author's name and birth year are required.")
+    if (!selectedAuthor) {
+      setError('Please selete an author.')
       return
     }
 
+    let cleanedYear = birthYear.trim()
     cleanedYear = Number(cleanedYear)
     const currentYear = new Date().getFullYear()
 
     if (
+      !cleanedYear ||
       !Number.isInteger(cleanedYear) ||
       cleanedYear <= 0 ||
       cleanedYear > currentYear
@@ -48,22 +41,28 @@ const AuthorUpdateForm = ({ setError }) => {
     }
 
     await editAuthor({
-      variables: { name: cleanedName, setBornTo: cleanedYear }
+      variables: { name: selectedAuthor.value, setBornTo: cleanedYear }
     })
 
-    setName('')
+    setSelectedAuthor(null)
     setBirthYear('')
   }
+
+  const options = authors.map((a) => ({
+    value: a.name,
+    label: a.name
+  }))
 
   return (
     <div>
       <h3>set birth year</h3>
       <form onSubmit={submit}>
         <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+          <Select
+            options={options}
+            value={selectedAuthor}
+            onChange={setSelectedAuthor}
+            placeholder="Select author..."
           />
         </div>
         <div>
@@ -81,7 +80,8 @@ const AuthorUpdateForm = ({ setError }) => {
 }
 
 AuthorUpdateForm.propTypes = {
-  setError: PropTypes.func.isRequired
+  setError: PropTypes.func.isRequired,
+  authors: PropTypes.array.isRequired
 }
 
 export default AuthorUpdateForm
