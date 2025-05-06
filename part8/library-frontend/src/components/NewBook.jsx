@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/client'
 
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
@@ -106,6 +107,11 @@ const NewBook = ({ show, setError }) => {
       </form>
     </div>
   )
+}
+
+NewBook.propTypes = {
+  show: PropTypes.bool.isRequired,
+  setError: PropTypes.func.isRequired
 }
 
 export default NewBook
