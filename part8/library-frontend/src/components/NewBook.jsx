@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
-const NewBook = (props) => {
+const NewBook = ({ show, setError }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -13,23 +13,44 @@ const NewBook = (props) => {
   const [createBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
-      console.error('Mutation error:', error.graphQLErrors[0]?.message)
+      const message = error.graphQLErrors.map((e) => e.message).join('\n')
+      setError(message)
     }
   })
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
   const submit = async (event) => {
     event.preventDefault()
 
+    if (!title.trim() || !author.trim() || !published.trim()) {
+      setError('Title, author, and published year are required.')
+      return
+    }
+
+    const publishedYear = Number(published)
+    const currentYear = new Date().getFullYear()
+
+    if (
+      !Number.isInteger(publishedYear) ||
+      publishedYear <= 0 ||
+      publishedYear > currentYear
+    ) {
+      setError(
+        `Published year must be a positive whole number not greater than ${currentYear}.`
+      )
+      return
+    }
+
     const cleanedGenres = genres.filter((g) => g.trim() !== '')
+
     await createBook({
       variables: {
         title,
         author,
-        published: parseInt(published),
+        published: publishedYear,
         genres: cleanedGenres
       }
     })
