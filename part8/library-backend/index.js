@@ -3,6 +3,25 @@ const { startStandaloneServer } = require('@apollo/server/standalone')
 const { GraphQLError } = require('graphql')
 const { v1: uuid } = require('uuid')
 
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Author = require('./models/author')
+const Book = require('./models/book')
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 let authors = [
   {
     name: 'Robert Martin',
@@ -47,49 +66,49 @@ let books = [
   {
     title: 'Clean Code',
     published: 2008,
-    author: 'Robert Martin',
+    author: authors[0],
     id: 'afa5b6f4-344d-11e9-a414-719c6709cf3e',
     genres: ['refactoring']
   },
   {
     title: 'Agile software development',
     published: 2002,
-    author: 'Robert Martin',
+    author: authors[0],
     id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
     genres: ['agile', 'patterns', 'design']
   },
   {
     title: 'Refactoring, edition 2',
     published: 2018,
-    author: 'Martin Fowler',
+    author: authors[1],
     id: 'afa5de00-344d-11e9-a414-719c6709cf3e',
     genres: ['refactoring']
   },
   {
     title: 'Refactoring to patterns',
     published: 2008,
-    author: 'Joshua Kerievsky',
+    author: authors[3],
     id: 'afa5de01-344d-11e9-a414-719c6709cf3e',
     genres: ['refactoring', 'patterns']
   },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
-    author: 'Sandi Metz',
+    author: authors[4],
     id: 'afa5de02-344d-11e9-a414-719c6709cf3e',
     genres: ['refactoring', 'design']
   },
   {
     title: 'Crime and punishment',
     published: 1866,
-    author: 'Fyodor Dostoevsky',
+    author: authors[2],
     id: 'afa5de03-344d-11e9-a414-719c6709cf3e',
     genres: ['classic', 'crime']
   },
   {
     title: 'Demons',
     published: 1872,
-    author: 'Fyodor Dostoevsky',
+    author: authors[2],
     id: 'afa5de04-344d-11e9-a414-719c6709cf3e',
     genres: ['classic', 'revolution']
   }
@@ -98,7 +117,7 @@ let books = [
 const typeDefs = `
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String!]!
     id: ID!
