@@ -126,7 +126,6 @@ const typeDefs = `
   type Author {
     name: String!
     born: Int
-    bookCount: Int!
     id: ID!
   }
 
@@ -153,53 +152,43 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      return books.filter((book) => {
-        const matchesAuthor = !args.author || book.author === args.author
-        const matchesGenre = !args.genre || book.genres.includes(args.genre)
-        return matchesAuthor && matchesGenre
-      })
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      // handle filter
+      return Book.find().populate('author')
     },
-    allAuthors: () => authors
-  },
-  Author: {
-    bookCount: (root) => {
-      return books.filter((book) => book.author === root.name).length
-    }
+    allAuthors: async () => Author.find({})
   },
   Mutation: {
-    addBook: (root, args) => {
-      if (books.find((b) => b.title === args.title)) {
-        throw new GraphQLError('Book name must be unique', {
+    addBook: async (root, args) => {
+      const existingBook = await Book.findOne({ title: args.title })
+      if (existingBook) {
+        throw new GraphQLError('Book title must be unique', {
           extensions: {
             code: 'BAD_USER_INPUT',
-            invalidArgs: args.name
+            invalidArgs: args.title
           }
         })
       }
 
-      const newBook = { ...args, id: uuid() }
-      books.push(newBook)
+      let author = await Author.findOne({ name: args.author })
 
-      let authorExists = authors.find((author) => author.name === args.author)
-      if (!authorExists) {
-        authors.push({
-          name: args.author,
-          born: null,
-          bookCount: 1,
-          id: uuid()
-        })
+      if (!author) {
+        author = new Author({ name: args.author })
+        await author.save()
       }
 
-      return newBook
+      const newBook = new Book({ ...args, author: author._id })
+      await newBook.save()
+      return newBook.populate('author')
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((author) => author.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
       if (!author) return null
 
       author.born = args.setBornTo
+      await author.save()
       return author
     }
   }
