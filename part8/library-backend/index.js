@@ -158,7 +158,9 @@ const resolvers = {
       if (!authorExists) {
         authors.push({
           name: args.author,
-          born: null
+          born: null,
+          bookCount: 1,
+          id: uuid()
         })
       }
 
