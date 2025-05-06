@@ -40,7 +40,7 @@ const NewBook = ({ show, setError }) => {
       publishedYear > currentYear
     ) {
       setError(
-        `Published year must be a positive whole number not greater than ${currentYear}.`
+        `Year must be a positive whole number not greater than ${currentYear}.`
       )
       return
     }

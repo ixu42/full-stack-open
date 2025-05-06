@@ -11,7 +11,7 @@ const App = () => {
   const notify = (message) => {
     setError(message)
     setTimeout(() => {
-      setError(null)
+      setError('')
     }, 10000)
   }
 
@@ -24,7 +24,7 @@ const App = () => {
       </div>
 
       <Notify errorMessage={error} />
-      <Authors show={page === 'authors'} />
+      <Authors show={page === 'authors'} setError={notify} />
       <Books show={page === 'books'} />
       <NewBook show={page === 'add'} setError={notify} />
     </div>
