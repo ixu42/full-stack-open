@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { ALL_AUTHORS } from '../queries'
 import AuthorUpdateForm from './AuthorUpdateForm'
 
-const Authors = ({ show, setError }) => {
+const Authors = ({ show, loggedIn, setError }) => {
   const result = useQuery(ALL_AUTHORS)
 
   if (!show) {
@@ -35,13 +35,14 @@ const Authors = ({ show, setError }) => {
           ))}
         </tbody>
       </table>
-      <AuthorUpdateForm setError={setError} authors={authors} />
+      {loggedIn && <AuthorUpdateForm setError={setError} authors={authors} />}
     </div>
   )
 }
 
 Authors.propTypes = {
   show: PropTypes.bool.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
   setError: PropTypes.func.isRequired
 }
 

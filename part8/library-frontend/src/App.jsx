@@ -43,7 +43,11 @@ const App = () => {
       </div>
 
       <Notify errorMessage={error} />
-      <Authors show={page === 'authors'} setError={notify} />
+      <Authors
+        show={page === 'authors'}
+        loggedIn={loggedIn}
+        setError={notify}
+      />
       <Books show={page === 'books'} />
       {loggedIn && <NewBook show={page === 'add'} setError={notify} />}
       {!loggedIn && (
