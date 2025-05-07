@@ -12,14 +12,7 @@ const Books = () => {
 
   const books = result.data.allBooks
 
-  // get a list of unique genres
-  const genreSet = new Set()
-  books.forEach((book) => {
-    book.genres.forEach((genre) => {
-      genreSet.add(genre)
-    })
-  })
-  const genres = Array.from(genreSet)
+  const genres = Array.from(new Set(books.flatMap((b) => b.genres)))
 
   const filteredBooks = selectedGenre
     ? books.filter((book) => book.genres.includes(selectedGenre))
