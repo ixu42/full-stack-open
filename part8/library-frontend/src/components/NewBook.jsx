@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
-const NewBook = ({ show, setError }) => {
+const NewBook = ({ setError }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -18,10 +18,6 @@ const NewBook = ({ show, setError }) => {
       setError(message)
     }
   })
-
-  if (!show) {
-    return null
-  }
 
   const submit = async (event) => {
     event.preventDefault()
@@ -110,7 +106,6 @@ const NewBook = ({ show, setError }) => {
 }
 
 NewBook.propTypes = {
-  show: PropTypes.bool.isRequired,
   setError: PropTypes.func.isRequired
 }
 
