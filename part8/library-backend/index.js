@@ -188,13 +188,37 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        author = new Author({ name: args.author })
-        await author.save()
+        try {
+          author = new Author({ name: args.author })
+          await author.save()
+        } catch (error) {
+          if (error.name === 'ValidationError') {
+            throw new GraphQLError(`Invalid author input: ${error.message}`, {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+                invalidArgs: args.author
+              }
+            })
+          }
+          throw error
+        }
       }
 
-      const newBook = new Book({ ...args, author: author._id })
-      await newBook.save()
-      return newBook.populate('author')
+      try {
+        const newBook = new Book({ ...args, author: author._id })
+        await newBook.save()
+        return newBook.populate('author')
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          throw new GraphQLError(`Invalid book input: ${error.message}`, {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args
+            }
+          })
+        }
+        throw error
+      }
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
