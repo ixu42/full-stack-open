@@ -1,6 +1,8 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { GraphQLError } = require('graphql')
+const jwt = require('jsonwebtoken')
+const User = require('./models/user')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -36,11 +38,22 @@ const typeDefs = `
     id: ID!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
@@ -54,6 +67,14 @@ const typeDefs = `
       name: String!
       setBornTo: Int!
     ): Author
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 
@@ -95,15 +116,16 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
 
       if (!author) {
+        author = new Author({ name: args.author })
         try {
-          author = new Author({ name: args.author })
           await author.save()
         } catch (error) {
           if (error.name === 'ValidationError') {
             throw new GraphQLError(`Invalid author input: ${error.message}`, {
               extensions: {
                 code: 'BAD_USER_INPUT',
-                invalidArgs: args.author
+                invalidArgs: args.author,
+                error
               }
             })
           }
@@ -111,21 +133,24 @@ const resolvers = {
         }
       }
 
+      const newBook = new Book({ ...args, author: author._id })
+
       try {
-        const newBook = new Book({ ...args, author: author._id })
         await newBook.save()
-        return newBook.populate('author')
       } catch (error) {
         if (error.name === 'ValidationError') {
           throw new GraphQLError(`Invalid book input: ${error.message}`, {
             extensions: {
               code: 'BAD_USER_INPUT',
-              invalidArgs: args
+              invalidArgs: args,
+              error
             }
           })
         }
         throw error
       }
+
+      return newBook.populate('author')
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
@@ -134,6 +159,37 @@ const resolvers = {
       author.born = args.setBornTo
       await author.save()
       return author
+    },
+    createUser: async (root, args) => {
+      const user = new User({ ...args })
+
+      return user.save().catch((error) => {
+        throw new GraphQLError('Creating the user failed.', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.username,
+            error
+          }
+        })
+      })
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username })
+
+      if (!user || args.password !== 'secret') {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT'
+          }
+        })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
     }
   }
 }
