@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import PropTypes from 'prop-types'
 import { LOGIN } from '../queries'
 
-const LoginForm = ({ show, setToken, setError }) => {
+const LoginForm = ({ show, setToken, setPage, setError }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -18,6 +18,7 @@ const LoginForm = ({ show, setToken, setError }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
+      setPage('books')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data])
@@ -57,6 +58,7 @@ const LoginForm = ({ show, setToken, setError }) => {
 LoginForm.propTypes = {
   show: PropTypes.bool.isRequired,
   setToken: PropTypes.func.isRequired,
+  setPage: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired
 }
 
