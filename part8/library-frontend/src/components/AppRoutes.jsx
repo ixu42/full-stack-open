@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Authors from './Authors'
 import Books from './Books'
 import NewBook from './NewBook'
+import Recommendations from './Recommendations'
 import LoginForm from './LoginForm'
 
 const AppRoutes = ({ loggedIn, setError, setToken }) => {
@@ -25,6 +26,10 @@ const AppRoutes = ({ loggedIn, setError, setToken }) => {
         element={
           loggedIn ? <NewBook setError={notify} /> : <Navigate to="/login" />
         }
+      />
+      <Route
+        path="/recommend"
+        element={loggedIn ? <Recommendations /> : <Navigate to="/login" />}
       />
       <Route
         path="/login"

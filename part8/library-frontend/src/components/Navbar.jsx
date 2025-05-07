@@ -24,6 +24,9 @@ const NavBar = ({ loggedIn, setToken }) => {
           <Link to="/add-book">
             <button>add book</button>
           </Link>
+          <Link to="/recommend">
+            <button>recommend</button>
+          </Link>
           <button onClick={logout}>logout</button>
         </>
       ) : (
