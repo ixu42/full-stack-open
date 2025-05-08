@@ -7,7 +7,8 @@ const Recommendations = () => {
 
   const res2 = useQuery(FIND_BOOKS_BY_GENRE, {
     variables: { genre: favGenre },
-    skip: !favGenre
+    skip: !favGenre,
+    fetchPolicy: 'network-only'
   })
 
   if (res1.loading || res2.loading) {

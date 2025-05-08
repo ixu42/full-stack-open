@@ -5,7 +5,8 @@ import { ALL_BOOKS, FIND_BOOKS_BY_GENRE } from '../queries'
 const Books = () => {
   const [selectedGenre, setSelectedGenre] = useState(null)
   const selectedBooksResult = useQuery(FIND_BOOKS_BY_GENRE, {
-    variables: { genre: selectedGenre }
+    variables: { genre: selectedGenre },
+    fetchPolicy: 'network-only'
   })
   const allBooksResult = useQuery(ALL_BOOKS)
 
