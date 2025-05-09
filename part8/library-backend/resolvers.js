@@ -1,7 +1,10 @@
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 const { GraphQLError } = require('graphql')
 const jwt = require('jsonwebtoken')
 const Author = require('./models/author')
 const Book = require('./models/book')
+const User = require('./models/user')
 
 const resolvers = {
   Query: {
@@ -67,7 +70,7 @@ const resolvers = {
         }
       }
 
-      const newBook = new Book({ ...args, author: author._id })
+      let newBook = new Book({ ...args, author: author._id })
 
       try {
         await newBook.save()
@@ -84,7 +87,9 @@ const resolvers = {
         throw error
       }
 
-      return newBook.populate('author')
+      newBook = newBook.populate('author')
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+      return newBook
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
@@ -132,6 +137,11 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+    }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
     }
   }
 }
