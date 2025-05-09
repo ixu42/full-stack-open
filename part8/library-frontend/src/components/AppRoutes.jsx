@@ -1,20 +1,29 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useSubscription } from '@apollo/client'
+import { useState } from 'react'
+import { useSubscription, useApolloClient } from '@apollo/client'
 import PropTypes from 'prop-types'
 import Authors from './Authors'
 import Books from './Books'
 import NewBook from './NewBook'
 import Recommendations from './Recommendations'
 import LoginForm from './LoginForm'
-import { ALL_BOOKS, BOOK_ADDED } from '../queries'
+import { FIND_BOOKS_BY_GENRE, BOOK_ADDED } from '../queries'
 import updateCache from '../updateCache'
 
 const AppRoutes = ({ loggedIn, setError, setToken }) => {
+  const [selectedGenre, setSelectedGenre] = useState(null)
+  const client = useApolloClient()
+
   useSubscription(BOOK_ADDED, {
-    onData: ({ data, client }) => {
+    onData: ({ data }) => {
       const addedBook = data.data.bookAdded
       window.alert(`${addedBook.title} added`)
-      updateCache(client.cache, { query: ALL_BOOKS }, 'allBooks', addedBook)
+      updateCache(
+        client.cache,
+        { query: FIND_BOOKS_BY_GENRE, variables: { genre: selectedGenre } },
+        'allBooks',
+        addedBook
+      )
     }
   })
 
@@ -31,7 +40,15 @@ const AppRoutes = ({ loggedIn, setError, setToken }) => {
         path="/authors"
         element={<Authors loggedIn={loggedIn} setError={notify} />}
       />
-      <Route path="/" element={<Books />} />
+      <Route
+        path="/"
+        element={
+          <Books
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+          />
+        }
+      />
       <Route
         path="/add-book"
         element={

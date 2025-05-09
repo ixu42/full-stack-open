@@ -1,9 +1,8 @@
-import { useState } from 'react'
 import { useQuery } from '@apollo/client'
+import PropTypes from 'prop-types'
 import { ALL_BOOKS, FIND_BOOKS_BY_GENRE } from '../queries'
 
-const Books = () => {
-  const [selectedGenre, setSelectedGenre] = useState(null)
+const Books = ({ selectedGenre, setSelectedGenre }) => {
   const selectedBooksResult = useQuery(FIND_BOOKS_BY_GENRE, {
     variables: { genre: selectedGenre },
     fetchPolicy: 'network-only'
@@ -50,6 +49,11 @@ const Books = () => {
       <button onClick={() => setSelectedGenre(null)}>all genres</button>
     </div>
   )
+}
+
+Books.propTypes = {
+  selectedGenre: PropTypes.string,
+  setSelectedGenre: PropTypes.func.isRequired
 }
 
 export default Books
