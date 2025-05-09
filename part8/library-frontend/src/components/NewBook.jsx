@@ -17,13 +17,15 @@ const NewBook = ({ setError }) => {
       setError(message)
     },
     update: (cache, response) => {
+      const newBook = response.data.addBook
       cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        const bookExists = allBooks.some((b) => b.id === newBook.id)
+        if (bookExists) return { allBooks }
         return {
           allBooks: allBooks.concat(response.data.addBook)
         }
       })
       cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        const newBook = response.data.addBook
         const author = newBook.author
         const authorExists = allAuthors.some((a) => a.name === author.name)
         if (authorExists) return { allAuthors }
