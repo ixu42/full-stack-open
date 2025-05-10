@@ -1,3 +1,5 @@
+import { isNotNumber, logError } from './utils';
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -7,6 +9,32 @@ interface Result {
   target: number;
   average: number;
 }
+
+interface argValues {
+  exerHours: number[];
+  target: number;
+}
+
+const parseArgs = (args: string[]): argValues => {
+  if (args.length < 4) throw new Error('Too few arguments.');
+
+  if (isNotNumber(args[2])) {
+    throw new Error('Provided values are not numbers.');
+  }
+
+  const hoursArr: number[] = [];
+  for (let i = 3; i < args.length; i++) {
+    if (isNotNumber(args[i])) {
+      throw new Error('Provided values are not numbers.');
+    }
+    hoursArr.push(Number(args[i]));
+  }
+
+  return {
+    exerHours: hoursArr,
+    target: Number(args[2])
+  };
+};
 
 const getRating = (averageTime: number, target: number): number => {
   if (averageTime >= target) {
@@ -46,5 +74,10 @@ const calculateExercises = (ExerHours: number[], target: number): Result => {
   };
 };
 
-const res = calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2);
-console.log(res);
+try {
+  const { target, exerHours } = parseArgs(process.argv);
+  const res = calculateExercises(exerHours, target);
+  console.log(res);
+} catch (e: unknown) {
+  logError(e);
+}

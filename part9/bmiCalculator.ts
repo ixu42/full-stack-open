@@ -1,3 +1,23 @@
+import { isNotNumber, logError } from './utils';
+
+interface bmiValues {
+  heightCm: number;
+  weightKg: number;
+}
+
+const parseArgs = (args: string[]): bmiValues => {
+  if (args.length < 4) throw new Error('Too few arguments.');
+  if (args.length > 4) throw new Error('Too many arguments.');
+
+  if (isNotNumber(args[2]) || isNotNumber(args[3])) {
+    throw new Error('Provided values are not numbers.');
+  }
+  return {
+    heightCm: Number(args[2]),
+    weightKg: Number(args[3])
+  };
+};
+
 const calculateBmi = (heightCm: number, weightKg: number): string => {
   const heightM = heightCm / 100;
   const bmi: number = weightKg / heightM ** 2;
@@ -11,4 +31,9 @@ const calculateBmi = (heightCm: number, weightKg: number): string => {
   return 'Obese (Class III)';
 };
 
-console.log(calculateBmi(180, 74));
+try {
+  const { heightCm, weightKg } = parseArgs(process.argv);
+  console.log(calculateBmi(heightCm, weightKg));
+} catch (e: unknown) {
+  logError(e);
+}
