@@ -54,6 +54,8 @@ const getRatingText = (rating: number): string => {
       return 'Not too bad but could be better';
     case 3:
       return 'Excellent work 🤩 Keep it up';
+    default:
+      return 'Unexpected value for rating';
   }
 };
 
