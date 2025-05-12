@@ -21,18 +21,26 @@ const parseArgs = (args: string[]): argValues => {
   if (isNotNumber(args[2])) {
     throw new Error('Provided values are not numbers.');
   }
+  const target = Number(args[2]);
+  if (target < 0) {
+    throw new Error('Hours cannot be negative.');
+  }
 
   const hoursArr: number[] = [];
   for (let i = 3; i < args.length; i++) {
     if (isNotNumber(args[i])) {
       throw new Error('Provided values are not numbers.');
     }
-    hoursArr.push(Number(args[i]));
+    const hours = Number(args[i]);
+    if (hours < 0) {
+      throw new Error('Hours cannot be negative.');
+    }
+    hoursArr.push(hours);
   }
 
   return {
     exerHours: hoursArr,
-    target: Number(args[2])
+    target: target
   };
 };
 
