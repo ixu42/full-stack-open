@@ -8,3 +8,7 @@ export const logError = (error: unknown): void => {
   }
   console.log(errorMsg);
 };
+
+export const allElemsInArrayAreNums = (arr: number[]): boolean => {
+  return arr.every((num) => num >= 0);
+};

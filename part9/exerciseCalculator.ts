@@ -1,4 +1,4 @@
-import { isNotNumber, logError } from './utils';
+import { isNotNumber, logError, allElemsInArrayAreNums } from './utils';
 
 interface Result {
   periodLength: number;
@@ -21,26 +21,18 @@ const parseArgs = (args: string[]): argValues => {
   if (isNotNumber(args[2])) {
     throw new Error('Provided values are not numbers.');
   }
-  const target = Number(args[2]);
-  if (target < 0) {
-    throw new Error('Hours cannot be negative.');
-  }
 
   const hoursArr: number[] = [];
   for (let i = 3; i < args.length; i++) {
     if (isNotNumber(args[i])) {
       throw new Error('Provided values are not numbers.');
     }
-    const hours = Number(args[i]);
-    if (hours < 0) {
-      throw new Error('Hours cannot be negative.');
-    }
-    hoursArr.push(hours);
+    hoursArr.push(Number(args[i]));
   }
 
   return {
     exerHours: hoursArr,
-    target: target
+    target: Number(args[2])
   };
 };
 
@@ -67,8 +59,20 @@ const getRatingText = (rating: number): string => {
   }
 };
 
-const calculateExercises = (ExerHours: number[], target: number): Result => {
+export const calculateExercises = (
+  ExerHours: number[],
+  target: number
+): Result => {
   const days = ExerHours.length;
+
+  if (days === 0) {
+    throw new Error('Period length cannot be 0');
+  }
+
+  if (!allElemsInArrayAreNums(ExerHours) || target < 0) {
+    throw new Error('Daily hours or target cannot be negative');
+  }
+
   const averageTime =
     ExerHours.reduce((sum, current) => sum + current, 0) / days;
   const rating = getRating(averageTime, target);
@@ -84,10 +88,12 @@ const calculateExercises = (ExerHours: number[], target: number): Result => {
   };
 };
 
-try {
-  const { target, exerHours } = parseArgs(process.argv);
-  const res = calculateExercises(exerHours, target);
-  console.log(res);
-} catch (e: unknown) {
-  logError(e);
+if (require.main === module) {
+  try {
+    const { target, exerHours } = parseArgs(process.argv);
+    const res = calculateExercises(exerHours, target);
+    console.log(res);
+  } catch (e: unknown) {
+    logError(e);
+  }
 }
