@@ -17,6 +17,7 @@ app.get('/bmi', (req, res) => {
 
   if (!height || !weight || isNaN(heightNum) || isNaN(weightNum)) {
     res.send({ error: 'malformatted parameters' }).status(400);
+    return;
   }
 
   if (heightNum <= 0 || weightNum <= 0) {
