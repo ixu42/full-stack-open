@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Diary } from './types';
 import { getAllDiaries } from './diaryService';
 import NewDiary from './components/NewDiary';
+import DiaryList from './components/DiaryList';
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
@@ -19,15 +20,7 @@ const App = () => {
       {error && <div style={{ color: 'red' }}>{error}</div>}
       <NewDiary {...{ setError, setDiaries, diaries }} />
       <h2>Diary entries</h2>
-      {diaries.map((diary) => (
-        <div key={diary.id}>
-          <h3>{diary.date}</h3>
-          <div>
-            <p style={{ margin: 0 }}>visibility: {diary.visibility}</p>
-            <p style={{ margin: 0 }}>weather: {diary.weather}</p>
-          </div>
-        </div>
-      ))}
+      <DiaryList diaries={diaries} />
     </div>
   );
 };
