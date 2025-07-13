@@ -3,11 +3,11 @@ import axios from 'axios';
 import type { Diary, Visibility, Weather } from './types';
 import { getAllDiaries, addDiary } from './diaryService';
 
-function App() {
+const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [date, setDate] = useState<string>('');
   const [visibility, setVisibility] = useState<Visibility | ''>('');
-  const [weather, setWeather] = useState<'' | Weather>('');
+  const [weather, setWeather] = useState<Weather | ''>('');
   const [comment, setComment] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
@@ -20,10 +20,16 @@ function App() {
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
+    if (!date || !visibility || !weather || !comment) {
+      setError('All fields are required');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+
     const diaryToAdd = {
       date,
-      visibility: visibility as Visibility,
-      weather: weather as Weather,
+      visibility,
+      weather,
       comment
     };
 
@@ -55,25 +61,38 @@ function App() {
         <div>
           date
           <input
+            type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
           />
         </div>
         <div>
           visibility
-          <input
-            value={visibility}
-            onChange={(event) =>
-              setVisibility(event.target.value as Visibility | '')
-            }
-          />
+          {['great', 'good', 'ok', 'poor'].map((v) => (
+            <label key={v}>
+              <input
+                type="radio"
+                value={v}
+                checked={visibility === v}
+                onChange={() => setVisibility(v as Visibility)}
+              />
+              {v}
+            </label>
+          ))}
         </div>
         <div>
           weather
-          <input
-            value={weather}
-            onChange={(event) => setWeather(event.target.value as Weather | '')}
-          />
+          {['sunny', 'rainy', 'cloudy', 'stormy', 'windy'].map((w) => (
+            <label key={w}>
+              <input
+                type="radio"
+                value={w}
+                checked={weather === w}
+                onChange={() => setWeather(w as Weather)}
+              />
+              {w}
+            </label>
+          ))}
         </div>
         <div>
           comment
@@ -96,6 +115,6 @@ function App() {
       ))}
     </div>
   );
-}
+};
 
 export default App;
