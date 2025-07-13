@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import type { Diary, Visibility, Weather } from '../types';
 import { addDiary } from '../diaryService';
 
 interface NewDiaryProps {
-  setError: (error: string | null) => void;
-  setDiaries: (diaries: Diary[]) => void;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  setDiaries: React.Dispatch<React.SetStateAction<Diary[]>>;
   diaries: Diary[];
 }
 
