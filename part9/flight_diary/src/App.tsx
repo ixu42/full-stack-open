@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import type { Diary, Visibility, Weather } from './types';
-import { getAllDiaries } from './diaryService';
+import { getAllDiaries, addDiary } from './diaryService';
 
 function App() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
@@ -8,6 +9,7 @@ function App() {
   const [visibility, setVisibility] = useState<Visibility | ''>('');
   const [weather, setWeather] = useState<'' | Weather>('');
   const [comment, setComment] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getAllDiaries().then((data) => {
@@ -15,28 +17,40 @@ function App() {
     });
   }, []);
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+
     const diaryToAdd = {
-      date: date,
+      date,
       visibility: visibility as Visibility,
       weather: weather as Weather,
-      comment: comment,
-      id: diaries.length + 1
+      comment
     };
-    console.log('Adding diary:', diaryToAdd);
-    setDiaries(diaries.concat(diaryToAdd));
-    setDate('');
-    // validate visibility and weather before setting
-    setVisibility('');
-    setWeather('');
-    setComment('');
-    return null;
+
+    try {
+      console.log('Adding diary:', diaryToAdd);
+      const savedDiary = await addDiary(diaryToAdd);
+      setDiaries(diaries.concat(savedDiary as Diary));
+      setDate('');
+      setVisibility('');
+      setWeather('');
+      setComment('');
+    } catch (error: unknown) {
+      if (error instanceof Error && axios.isAxiosError(error)) {
+        setError(error.response?.data?.error ?? 'An unexpected error occurred');
+      } else {
+        setError('An unexpected error occurred');
+      }
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
   };
 
   return (
     <div>
       <h2>Add new entry</h2>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <form onSubmit={handleSubmit}>
         <div>
           date
