@@ -6,6 +6,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Patient, Diagnosis } from '../types';
 import patientService from '../services/patients';
+import EntryDetails from './EntryDetails';
 
 const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -61,7 +62,10 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
         <p style={{ margin: 0 }}>occupation: {patient.occupation}</p>
       </div>
       <h3>entries</h3>
-      <div>
+      {patient.entries.map((entry) => (
+        <EntryDetails key={entry.id} entry={entry} />
+      ))}
+      {/* <div>
         {patient.entries.map((entry) => (
           <div key={entry.id}>
             <div>
@@ -83,7 +87,7 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
             )}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
