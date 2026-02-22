@@ -1,3 +1,5 @@
+import { isNotNumber, logError } from './utils';
+
 type Rating = 1 | 2 | 3;
 
 interface Result {
@@ -10,14 +12,14 @@ interface Result {
   average: number;
 }
 
-const parseArguments = (args: string[]): number[] => {
+const parseArgs = (args: string[]): number[] => {
   if (args.length < 4) throw new Error('Too few arguments');
 
   const inputs = args.slice(2);
   const ret: number[] = [];
 
   for (const i of inputs) {
-    if (isNaN(Number(i))) throw new Error('All the values should be numbers');
+    if (isNotNumber(i)) throw new Error('All the values should be numbers');
     ret.push(Number(i));
   }
 
@@ -67,12 +69,8 @@ function calculateExercises(dailyHours: number[], targetHours: number): Result {
 
 try {
   // example input: 2 1 0 2 4.5 0 3 1 0 4
-  const args = parseArguments(process.argv);
+  const args = parseArgs(process.argv);
   console.log(calculateExercises(args.slice(1), args[0]));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happend.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
+  logError(error);
 }
