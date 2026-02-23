@@ -19,7 +19,7 @@ const parseArgs = (args: string[]): BmiParams => {
   };
 };
 
-function calculateBmi(height: number, weight: number): string {
+export function calculateBmi(height: number, weight: number): string {
   const bmi: number = weight / (height / 100) ** 2;
 
   if (bmi < 16.0) {
@@ -39,11 +39,15 @@ function calculateBmi(height: number, weight: number): string {
   } else if (bmi >= 40.0) {
     return 'Obese (Class III)';
   }
+
+  return 'invalid input';
 }
 
-try {
-  const { height, weight } = parseArgs(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  logError(error);
+if (require.main === module) {
+  try {
+    const { height, weight } = parseArgs(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    logError(error);
+  }
 }
