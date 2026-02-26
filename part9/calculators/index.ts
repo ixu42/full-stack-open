@@ -26,12 +26,20 @@ app.get('/bmi', (req, res) => {
     });
   }
 
+  if (heightNum <= 0 || weightNum <= 0) {
+    return res.status(400).json({
+      error: 'Height and weight must be greater than 0.'
+    });
+  }
+
   return res.json({
     height: heightNum,
     weight: weightNum,
     bmi: calculateBmi(heightNum, weightNum)
   });
 });
+
+app.post('/exercise', (req, res) => {});
 
 const PORT = 3003;
 
