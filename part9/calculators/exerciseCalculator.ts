@@ -45,7 +45,10 @@ function getRatingDescription(rating: number): string {
   }
 }
 
-function calculateExercises(dailyHours: number[], targetHours: number): Result {
+export function calculateExercises(
+  dailyHours: number[],
+  targetHours: number
+): Result {
   const averageHours =
     dailyHours.length > 0
       ? dailyHours.reduce((sum, val) => sum + val, 0) / dailyHours.length
@@ -67,10 +70,12 @@ function calculateExercises(dailyHours: number[], targetHours: number): Result {
   };
 }
 
-try {
-  // example input: 2 1 0 2 4.5 0 3 1 0 4
-  const args = parseArgs(process.argv);
-  console.log(calculateExercises(args.slice(1), args[0]));
-} catch (error: unknown) {
-  logError(error);
+if (require.main === module) {
+  try {
+    // example input: 2 1 0 2 4.5 0 3 1 0 4
+    const args = parseArgs(process.argv);
+    console.log(calculateExercises(args.slice(1), args[0]));
+  } catch (error: unknown) {
+    logError(error);
+  }
 }
